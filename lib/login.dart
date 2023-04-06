@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'principal.dart';
 
 class LoginTela extends StatefulWidget {
   const LoginTela({Key? key}) : super(key: key);
@@ -28,15 +29,21 @@ class _LoginTelaState extends State<LoginTela> {
     );
   }
 
-  ElevatedButton botaoLogin(String label, Function funcionalidade) {
+  ElevatedButton botaoLogin(String label, void Function() funcionalidade) {
     return ElevatedButton(
-        onPressed: () => funcionalidade,
+        onPressed: () => funcionalidade(),
         style: ElevatedButton.styleFrom(
             shape: const StadiumBorder(), backgroundColor: Colors.blueGrey),
         child: Text(
           label,
           style: const TextStyle(fontSize: 16, color: Colors.black),
         ));
+  }
+
+  void navegarTelaPrincipal(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => const TelaPrincipal()),
+    );
   }
 
   @override
@@ -66,7 +73,7 @@ class _LoginTelaState extends State<LoginTela> {
             SizedBox(
               width: 0.36 * width,
               height: 0.0625 * height,
-              child: botaoLogin('Entrar', emptyMethod),
+              child: botaoLogin('Entrar', () => navegarTelaPrincipal(context)),
             ),
             SizedBox(
               width: 0.36 * width,
