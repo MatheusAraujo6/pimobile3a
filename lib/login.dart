@@ -78,7 +78,7 @@ class _LoginTelaState extends State<LoginTela> {
             SizedBox(
               width: 0.36 * width,
               height: 0.0625 * height,
-              child: botaoLogin('Modo offline', emptyMethod),
+              child: botaoLogin('Criar conta', emptyMethod),
             ),
           ],
         ),
