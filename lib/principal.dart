@@ -12,6 +12,15 @@ class TelaPrincipal extends StatefulWidget {
 class _TelaPrincipalState extends State<TelaPrincipal> {
   Color cinzaCustom = const Color.fromARGB(255, 163, 163, 163);
 
+  void navegarGerenciarAlarmes(BuildContext context) {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const GerenciarAlarmes()));
+  }
+
+  void navegarTelaAnterior(BuildContext context) {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -22,8 +31,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         body: GestureDetector(
           onVerticalDragEnd: (details) {
             if (details.primaryVelocity! > 0) {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => const GerenciarAlarmes()));
+              navegarGerenciarAlarmes(context);
             }
           },
           child: Padding(
@@ -72,15 +80,20 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Text('Calendário →',
-                        style: TextStyle(color: cinzaCustom, fontSize: 18)),
+                    TextButton(
+                        onPressed: () => navegarTelaAnterior(context),
+                        child: Text('Calendário →',
+                            style:
+                                TextStyle(color: cinzaCustom, fontSize: 18))),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('↓ Gerenciar alarmes ↓',
-                        style: TextStyle(color: cinzaCustom, fontSize: 18)),
+                    TextButton(
+                        onPressed: () => navegarGerenciarAlarmes(context),
+                        child: Text('↓ Gerenciar alarmes ↓',
+                            style: TextStyle(color: cinzaCustom, fontSize: 18)))
                   ],
                 ),
               ],

@@ -27,28 +27,31 @@ class _GerenciarAlarmesState extends State<GerenciarAlarmes> {
                 Navigator.of(context).pop();
               }
             },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.list,
-                  size: 35,
-                ),
-                SizedBox(
-                  width: 0.833 * width,
-                  height: 0.09 * height,
-                  child: ElevatedButton(
-                      onPressed: () => navegarTelaAnterior(context),
-                      style: ElevatedButton.styleFrom(
-                          shape: const RoundedRectangleBorder(),
-                          backgroundColor: Colors.blueGrey),
-                      child: const Text(
-                        'Adicionar alarme',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
-                      )),
-                ),
-              ],
-            )));
+            child: Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: 0.01 * height, horizontal: 0.01 * width),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    const Icon(
+                      Icons.list,
+                      size: 35,
+                    ),
+                    SizedBox(
+                      width: 0.833 * width,
+                      height: 0.09 * height,
+                      child: ElevatedButton(
+                          onPressed: () => navegarTelaAnterior(context),
+                          style: ElevatedButton.styleFrom(
+                              shape: const StadiumBorder(),
+                              backgroundColor: Colors.blueGrey),
+                          child: const Text(
+                            'Adicionar alarme',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          )),
+                    ),
+                  ],
+                ))));
   }
 }
