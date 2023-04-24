@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'principal.dart';
+import 'gerenciar_lista.dart';
 
 class LoginTela extends StatefulWidget {
   const LoginTela({Key? key}) : super(key: key);
