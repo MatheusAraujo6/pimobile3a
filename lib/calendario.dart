@@ -53,6 +53,22 @@ class Calendario extends StatelessWidget {
     );
   }
 
+  Widget gerarSemana(int diaInicial) {
+    List<Widget> semana = [];
+    for (int i = diaInicial; i < diaInicial + 7; i++) {
+      semana.add(DiaCalendario(dia: i));
+      //semana.add(const Spacer());
+    }
+    /*
+    return Expanded(
+      child: Row(
+        children: semana,
+      ),
+    );
+    */
+    return Row(children: semana);
+  }
+
   @override
   Widget build(BuildContext context) {
     /*
@@ -103,6 +119,46 @@ class Calendario extends StatelessWidget {
 
     */
 
-    return gerarMes(0);
+    /*
+    return Column(
+      children: [
+        Expanded(child: gerarMes(0)),
+        Expanded(child: gerarMes(50)),
+      ],
+    );
+    */
+
+    /*
+    return ListView.builder(
+      shrinkWrap: true,
+      itemBuilder: (BuildContext context, int index) {
+        gerarSemana(index);
+      },
+    );
+    */
+
+    List<Widget> semanas = [];
+
+    for (int i = 0; i < 50; i++) {
+      Widget semana = gerarSemana(i);
+      semanas.add(semana);
+    }
+
+    /*
+    return ListView(
+      children: [
+        gerarSemana(0),
+        gerarSemana(10),
+      ],
+    );
+    */
+
+    return ListView(
+      children: semanas,
+    );
+
+    //return gerarSemana(10);
+
+    //return gerarMes(0);
   }
 }
