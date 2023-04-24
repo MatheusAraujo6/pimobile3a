@@ -1,3 +1,4 @@
+import 'package:alarme_pi/calendario.dart';
 import 'package:alarme_pi/card_alarme.dart';
 import 'package:flutter/material.dart';
 
@@ -36,8 +37,17 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
                 AlarmeCard(),
               ],
             ),
-            const Center(
-              child: Text('Esta tela terá o calendário.'),
+            Column(
+              children: const [
+                Text(
+                  'Abril 2023',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                  ),
+                ),
+                Calendario(),
+              ],
             ),
           ],
         ),
