@@ -48,33 +48,49 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         ),
         body: TabBarView(
           children: <Widget>[
-            ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return const AlarmeCard();
-              },
+            ListView(
+              children: const [
+                AlarmeCard(),
+                AlarmeCard(),
+              ],
             ),
             Padding(
               padding: EdgeInsets.only(
-                top: 0.01 * height,
+                top: 0.05 * height,
                 left: 0.0667 * width,
                 right: 0.0667 * width,
-                bottom: 0.05 * height,
+                bottom: 0.1 * height,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Padding(
-                    padding: EdgeInsets.only(bottom: 15),
-                    child: Text(
-                      'Abril 2023',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                      ),
+                    padding: EdgeInsets.only(bottom: 0.05 * height),
+                    child: Row(
+                      children: [
+                        const Text(
+                          'Abril 2023',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 32,
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () {},
+                          color: Colors.white,
+                          icon: const Icon(Icons.arrow_upward),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          color: Colors.white,
+                          icon: const Icon(Icons.arrow_downward),
+                        ),
+                      ],
                     ),
                   ),
-                  Expanded(child: Calendario()),
+                  const Calendario(),
                 ],
               ),
             ),

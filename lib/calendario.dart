@@ -4,21 +4,70 @@ class DiaCalendario extends StatelessWidget {
   final int dia;
   const DiaCalendario({super.key, this.dia = 0});
 
+  Widget textoDia() {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            (dia % 32).toString(),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget linhaAlarme(Color cor) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+      child: Container(
+        height: 1,
+        color: cor,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<Widget> meuContainer = [];
+    List<Widget> linhas = [];
+    meuContainer.add(textoDia());
+
+    int offset = dia + 1;
+    int offset2 = dia + 0;
+
+    if ((offset % 7) == 0) {
+      linhas.add(linhaAlarme(Colors.orange));
+      linhas.add(linhaAlarme(Colors.greenAccent));
+    }
+
+    if ((offset2 % 7) == 0) {
+      linhas.add(linhaAlarme(Colors.greenAccent));
+    }
+
+    Widget colunaLinhas = Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: linhas,
+      ),
+    );
+
+    meuContainer.add(colunaLinhas);
+
     return Expanded(
       child: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: Colors.blueGrey.shade800,
-          border: Border.all(width: 2),
+          border: Border.all(width: 1),
         ),
-        child: Text(
-          dia.toString(),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: meuContainer,
         ),
       ),
     );
@@ -35,14 +84,8 @@ class Calendario extends StatelessWidget {
       List<Widget> semana = [];
       for (int j = 0; j < 7; j++) {
         semana.add(DiaCalendario(dia: i + j));
-        //semana.add(const Spacer());
       }
-      //semana.removeLast();
-      Expanded linha = Expanded(
-        child: Row(
-          children: semana,
-        ),
-      );
+      Expanded linha = Expanded(child: Row(children: semana));
       linhas.add(linha);
     }
 
@@ -53,112 +96,8 @@ class Calendario extends StatelessWidget {
     );
   }
 
-  Widget gerarSemana(int diaInicial) {
-    List<Widget> semana = [];
-    for (int i = diaInicial; i < diaInicial + 7; i++) {
-      semana.add(DiaCalendario(dia: i));
-      //semana.add(const Spacer());
-    }
-    /*
-    return Expanded(
-      child: Row(
-        children: semana,
-      ),
-    );
-    */
-    return Row(children: semana);
-  }
-
   @override
   Widget build(BuildContext context) {
-    /*
-    return ListView.builder(
-      itemBuilder: (BuildContext context, int index) {
-        return Row(
-          children: [
-            DiaCalendario(dia: index),
-            DiaCalendario(dia: index + 1),
-            DiaCalendario(dia: index + 2),
-            DiaCalendario(dia: index + 3),
-            DiaCalendario(dia: index + 4),
-            DiaCalendario(dia: index + 5),
-            DiaCalendario(dia: index + 6),
-          ],
-        );
-      },
-    );
-    */
-
-    /*
-    List<Widget> linhas = [];
-
-    for (int i = 0; i <= 28; i = i + 7) {
-      List<Widget> semana = [];
-      for (int j = 0; j < 7; j++) {
-        semana.add(DiaCalendario(dia: i + j));
-        semana.add(const Spacer());
-      }
-      semana.removeLast();
-      Row linha = Row(
-        children: semana,
-      );
-      linhas.add(linha);
-    }
-    */
-
-    /*
-
-    return GridView.builder(
-      shrinkWrap: true,
-      gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
-      itemBuilder: (BuildContext context, int index) {
-        return gerarMes(index);
-      },
-    );
-
-    */
-
-    /*
-    return Column(
-      children: [
-        Expanded(child: gerarMes(0)),
-        Expanded(child: gerarMes(50)),
-      ],
-    );
-    */
-
-    /*
-    return ListView.builder(
-      shrinkWrap: true,
-      itemBuilder: (BuildContext context, int index) {
-        gerarSemana(index);
-      },
-    );
-    */
-
-    List<Widget> semanas = [];
-
-    for (int i = 0; i < 50; i++) {
-      Widget semana = gerarSemana(i);
-      semanas.add(semana);
-    }
-
-    /*
-    return ListView(
-      children: [
-        gerarSemana(0),
-        gerarSemana(10),
-      ],
-    );
-    */
-
-    return ListView(
-      children: semanas,
-    );
-
-    //return gerarSemana(10);
-
-    //return gerarMes(0);
+    return Flexible(child: gerarMes(26));
   }
 }
