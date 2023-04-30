@@ -1,23 +1,21 @@
-import 'package:alarme_pi/calendario.dart';
-import 'package:alarme_pi/card_alarme.dart';
+import 'package:alarme_pi/widgets/calendario.dart';
+import 'package:alarme_pi/widgets/card_alarme.dart';
 import 'package:flutter/material.dart';
 
 class TelaPrincipal extends StatefulWidget {
   const TelaPrincipal({Key? key}) : super(key: key);
+
+  static void navegar(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const TelaPrincipal()),
+    );
+  }
 
   @override
   State<TelaPrincipal> createState() => _TelaPrincipalState();
 }
 
 class _TelaPrincipalState extends State<TelaPrincipal> {
-  List<Widget> cards = [];
-
-  _TelaPrincipalState() {
-    for (int i = 0; i < 64; i++) {
-      cards.add(const AlarmeCard());
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;

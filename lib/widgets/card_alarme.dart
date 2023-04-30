@@ -36,25 +36,6 @@ class _AlarmeCardState extends State<AlarmeCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               textoCard('Nome do primeiro alarme'),
-              //textoCard('Nome do segundo alarme'),
-              /*
-                Padding(
-                  padding: EdgeInsets.only(
-                  top: 0.01 * height,
-                  bottom: 0.02 * height,
-                  left: 0.05 * width,
-                  right: 0.05 * width
-                  ),
-                  padding: const EdgeInsets.only(top: 3),
-                  child: SizedBox(
-                    width: 0.893 * card_tamanho,
-                    height: 1,
-                    child: Container(
-                      color: Colors.orange,
-                    ),
-                  ),
-                ),
-                */
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Column(
