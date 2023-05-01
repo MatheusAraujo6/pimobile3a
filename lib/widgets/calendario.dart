@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class DiaCalendario extends StatelessWidget {
   final int dia;
-  const DiaCalendario({super.key, this.dia = 0});
+  final bool modoCompacto;
+  const DiaCalendario({super.key, this.dia = 0, this.modoCompacto = false});
 
   Widget textoDia() {
     return Expanded(
@@ -31,8 +32,35 @@ class DiaCalendario extends StatelessWidget {
     );
   }
 
+  Widget diaCompacto() {
+    int diaCorrigido = dia % 32;
+    Color corDia = Colors.white;
+
+    if ((dia % 7) == 0) {
+      corDia = Colors.redAccent;
+    }
+
+    return Expanded(
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.blueGrey.shade800,
+          border: Border.all(),
+        ),
+        child: Text(
+          diaCorrigido.toString(),
+          style: TextStyle(color: corDia),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (modoCompacto) {
+      return diaCompacto();
+    }
+
     List<Widget> meuContainer = [];
     List<Widget> linhas = [];
     meuContainer.add(textoDia());
@@ -75,7 +103,9 @@ class DiaCalendario extends StatelessWidget {
 }
 
 class Calendario extends StatelessWidget {
-  const Calendario({super.key});
+  final bool compacto;
+
+  const Calendario({super.key, this.compacto = false});
 
   Widget gerarMes(int diaInicial) {
     List<Widget> linhas = [];
@@ -83,7 +113,10 @@ class Calendario extends StatelessWidget {
     for (int i = diaInicial; i <= diaInicial + 35; i = i + 7) {
       List<Widget> semana = [];
       for (int j = 0; j < 7; j++) {
-        semana.add(DiaCalendario(dia: i + j));
+        semana.add(DiaCalendario(
+          dia: i + j,
+          modoCompacto: compacto,
+        ));
       }
       Expanded linha = Expanded(child: Row(children: semana));
       linhas.add(linha);

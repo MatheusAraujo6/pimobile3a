@@ -1,3 +1,4 @@
+import 'package:alarme_pi/screens/editar_alarme.dart';
 import 'package:alarme_pi/widgets/calendario.dart';
 import 'package:alarme_pi/widgets/card_alarme.dart';
 import 'package:flutter/material.dart';
@@ -29,9 +30,11 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         appBar: AppBar(
           title: const Text('Alarme PI'),
           actions: [
-            IconButton(
-              onPressed: () {},
+            PopupMenuButton(
               icon: const Icon(Icons.more_vert),
+              itemBuilder: (BuildContext context) => <PopupMenuItem>[
+                const PopupMenuItem(child: Text("Sair")),
+              ],
             ),
           ],
           backgroundColor: Colors.blueGrey.shade800,
@@ -96,7 +99,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () => EditarAlarme.navegar(context),
           backgroundColor: Colors.blueGrey.shade400,
           child: const Icon(Icons.add),
         ),

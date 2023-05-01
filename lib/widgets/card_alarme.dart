@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/editar_alarme.dart';
 
 class AlarmeCard extends StatefulWidget {
   const AlarmeCard({Key? key}) : super(key: key);
@@ -27,7 +28,7 @@ class _AlarmeCardState extends State<AlarmeCard> {
       clipBehavior: Clip.hardEdge,
       color: Colors.blueGrey,
       child: InkWell(
-        onTap: () {},
+        onTap: () => EditarAlarme.navegar(context),
         onLongPress: () {},
         child: Padding(
           padding: const EdgeInsets.all(8),
@@ -61,7 +62,6 @@ class _AlarmeCardState extends State<AlarmeCard> {
                     thumbColor:
                         const MaterialStatePropertyAll<Color>(Colors.white),
                     activeColor: Colors.blueGrey.shade50,
-                    //const Color.fromARGB(255, 69, 75, 77)
                     onChanged: (value) {
                       setState(
                         () {
