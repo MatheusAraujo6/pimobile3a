@@ -17,6 +17,16 @@ class _LoginTelaState extends State<LoginTela> {
   // <Widget> Form();
   // <Widget> TextFormField();
 
+  String? _validarEmail(String? valor) {
+    if (valor == null || valor.isEmpty) {
+      return "Email é obrigatório";
+    }
+
+    return null;
+  }
+
+  void _enviarForm(BuildContext context) {}
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
