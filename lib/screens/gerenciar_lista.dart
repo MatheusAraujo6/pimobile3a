@@ -1,4 +1,5 @@
 import 'package:alarme_pi/screens/editar_alarme.dart';
+import 'package:alarme_pi/screens/login.dart';
 import 'package:alarme_pi/widgets/calendario.dart';
 import 'package:alarme_pi/widgets/card_alarme.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,12 @@ class TelaPrincipal extends StatefulWidget {
   static void navegar(BuildContext context) {
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const TelaPrincipal()),
+    );
+  }
+
+  static void sair(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const LoginTela()),
     );
   }
 
@@ -30,12 +37,10 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         appBar: AppBar(
           title: const Text('Alarme PI'),
           actions: [
-            PopupMenuButton(
-              icon: const Icon(Icons.more_vert),
-              itemBuilder: (BuildContext context) => <PopupMenuItem>[
-                const PopupMenuItem(child: Text("Sair")),
-              ],
-            ),
+            IconButton(
+              onPressed: () => TelaPrincipal.sair(context),
+              icon: const Icon(Icons.logout),
+            )
           ],
           backgroundColor: Colors.blueGrey.shade800,
           //shadowColor: Colors.orange,
