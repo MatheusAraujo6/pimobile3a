@@ -37,29 +37,29 @@ class _CriarContaState extends State<CriarConta> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                LabelEntrada(label: "Nome"),
-                CaixaEntradaTexto(label: ""),
+                //LabelEntrada(label: "Nome"),
+                CaixaEntradaTexto(label: "Nome"),
               ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                LabelEntrada(label: "Endereço de e-mail"),
-                CaixaEntradaTexto(label: ""),
+                //LabelEntrada(label: "Endereço de e-mail"),
+                CaixaEntradaTexto(label: "Endereço de e-mail"),
               ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                LabelEntrada(label: "Senha"),
-                CaixaEntradaTexto(label: ""),
+                //LabelEntrada(label: "Senha"),
+                CaixaEntradaTexto(label: "Senha"),
               ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                LabelEntrada(label: "Confirmar senha"),
-                CaixaEntradaTexto(label: ""),
+                //LabelEntrada(label: "Confirmar senha"),
+                CaixaEntradaTexto(label: "Confirmar senha"),
               ],
             ),
             SizedBox(

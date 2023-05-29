@@ -1,3 +1,7 @@
+int _teste(int num) {
+  return num + 1;
+}
+
 class GlobalState {
   GlobalState._privateConstructor();
 
@@ -6,6 +10,6 @@ class GlobalState {
   int counter = 0;
 
   void increaseCounter() {
-    counter += 1;
+    counter += _teste(2);
   }
 }

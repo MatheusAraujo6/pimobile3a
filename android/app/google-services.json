@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "772099057175",
+    "project_id": "backend-alarme",
+    "storage_bucket": "backend-alarme.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:772099057175:android:15ab95c8169da99061de52",
+        "android_client_info": {
+          "package_name": "com.example.alarme_pi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPud6kk6ZcQMIZ3hPsfrphJiUkpm4gHVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

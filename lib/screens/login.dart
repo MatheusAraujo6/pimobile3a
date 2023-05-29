@@ -22,6 +22,22 @@ class _LoginTelaState extends State<LoginTela> {
       return "Email é obrigatório";
     }
 
+    if (!valor.contains('@')) {
+      return "Email inválido";
+    }
+
+    return null;
+  }
+
+  String? _validarSenha(String? valor) {
+    if (valor == null || valor.isEmpty) {
+      return "Senha é obrigatória";
+    }
+
+    if (valor.length < 8) {
+      return "Senha deve conter 8 caracteres";
+    }
+
     return null;
   }
 
@@ -52,15 +68,15 @@ class _LoginTelaState extends State<LoginTela> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                LabelEntrada(label: 'Usuário'),
-                CaixaEntradaTexto(label: ''),
+                //LabelEntrada(label: 'Usuário'),
+                CaixaEntradaTexto(label: 'Endereço de e-mail'),
               ],
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: const [
-                LabelEntrada(label: "Senha"),
-                CaixaEntradaTexto(label: '', isPassword: true),
+                //LabelEntrada(label: "Senha"),
+                CaixaEntradaTexto(label: 'Senha', isPassword: true),
               ],
             ),
             SizedBox(

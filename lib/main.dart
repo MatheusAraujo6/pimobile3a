@@ -7,7 +7,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+  // Incluir o arquivo firebase_options.dart junto com este arquivo main.dart
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
