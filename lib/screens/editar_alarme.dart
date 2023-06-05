@@ -1,17 +1,23 @@
+import 'package:alarme_pi/screens/gerenciar_lista.dart';
 import 'package:flutter/material.dart';
-import '../widgets/calendario.dart';
-import '../widgets/custom_radio.dart';
+import 'package:alarme_pi/widgets/calendario.dart';
+import 'package:alarme_pi/widgets/custom_radio.dart';
+import 'package:alarme_pi/data/alarme.dart';
 
 class EditarAlarme extends StatefulWidget {
   final bool modoCriar;
+  final Alarme alarme;
 
-  const EditarAlarme({Key? key, this.modoCriar = false}) : super(key: key);
+  const EditarAlarme({Key? key, this.modoCriar = false, required this.alarme})
+      : super(key: key);
 
-  static void navegar(BuildContext context, {bool criar = false}) {
-    Navigator.of(context).push(
+  static void navegar(BuildContext context,
+      {bool criar = false, required Alarme alarme}) {
+    Navigator.of(context).pushReplacement(
       MaterialPageRoute(
         builder: ((context) => EditarAlarme(
               modoCriar: criar,
+              alarme: alarme,
             )),
       ),
     );
@@ -79,16 +85,37 @@ class _EditarAlarmeState extends State<EditarAlarme> {
     });
   }
 
+  Widget construirHora(BuildContext context, Alarme alarme, Widget origem) {
+    return TextButton(
+      child: Text(
+        alarme.hora.toString(),
+        style: TextStyle(
+          color: Colors.blueGrey.shade50,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      onPressed: () async {
+        Future<TimeOfDay?> novaHora = showDialog<TimeOfDay?>(
+          context: context,
+          builder: (BuildContext context) {
+            return TimePickerDialog(initialTime: alarme.hora);
+          },
+        );
+
+        alarme.hora = (await novaHora)!;
+        origem = construirHora(context, alarme, origem);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    Alarme alarme = widget.alarme;
     _modoCriar = widget.modoCriar;
-    List<Widget> botaoSalvar = [];
-    if (_modoCriar) {
-      botaoSalvar.add(
-        IconButton(onPressed: () {}, icon: const Icon(Icons.check)),
-      );
-    }
     List<Widget> radioSemana = [];
+    Widget hora = const Placeholder();
+    hora = construirHora(context, alarme, hora);
 
     for (int i = 0; i < 7; i++) {
       Widget novoRadio = RadioCustom(
@@ -109,7 +136,10 @@ class _EditarAlarmeState extends State<EditarAlarme> {
           _modoCriar ? "Adicionar alarme" : "Editar Alarme",
           style: const TextStyle(color: Colors.white),
         ),
-        actions: botaoSalvar,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => TelaPrincipal.navegar(context),
+        ),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -118,6 +148,7 @@ class _EditarAlarmeState extends State<EditarAlarme> {
           Padding(
             padding: const EdgeInsets.only(left: 8, right: 8, bottom: 5),
             child: Row(
+              // Header calendário
               children: [
                 const Text(
                   'Abril 2023',
@@ -154,25 +185,7 @@ class _EditarAlarmeState extends State<EditarAlarme> {
                     style: TextStyle(color: Colors.white, fontSize: 15),
                   ),
                   const Spacer(),
-                  TextButton(
-                    child: Text(
-                      "06:30",
-                      style: TextStyle(
-                        color: Colors.blueGrey.shade50,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return const TimePickerDialog(
-                              initialTime: TimeOfDay(hour: 6, minute: 30));
-                        },
-                      );
-                    },
-                  ),
+                  hora,
                 ],
               ),
             ),
@@ -188,14 +201,18 @@ class _EditarAlarmeState extends State<EditarAlarme> {
                     color: Colors.white,
                   ),
                   Container(width: 5),
-                  const Flexible(
+                  Flexible(
                     child: TextField(
-                      decoration: InputDecoration(
-                        border: UnderlineInputBorder(),
-                        hintText: "Nome do alarme",
-                        hintStyle: TextStyle(color: Colors.white),
-                      ),
-                      style: TextStyle(color: Colors.white),
+                      controller: TextEditingController(text: alarme.nome),
+                      //decoration: const InputDecoration(
+                      //  border: UnderlineInputBorder(),
+                      //  hintText: "Nome do alarme",
+                      //  hintStyle: TextStyle(color: Colors.white),
+                      //),
+                      style: const TextStyle(color: Colors.white),
+                      onChanged: (String novoNome) async {
+                        alarme.nome = novoNome;
+                      },
                     ),
                   ),
                 ],

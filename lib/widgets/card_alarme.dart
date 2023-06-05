@@ -3,7 +3,8 @@ import 'package:alarme_pi/screens/editar_alarme.dart';
 import 'package:alarme_pi/data/alarme.dart';
 
 class AlarmeCard extends StatefulWidget {
-  const AlarmeCard({Key? key}) : super(key: key);
+  final Alarme alarme;
+  const AlarmeCard({Key? key, required this.alarme}) : super(key: key);
 
   @override
   State<AlarmeCard> createState() => _AlarmeCardState();
@@ -24,12 +25,13 @@ class _AlarmeCardState extends State<AlarmeCard> {
     //double width = MediaQuery.of(context).size.width;
     //double height = MediaQuery.of(context).size.height;
     //double card_tamanho = 0.833 * width;
+    Alarme alarme = widget.alarme;
 
     return Card(
       clipBehavior: Clip.hardEdge,
       color: Colors.blueGrey,
       child: InkWell(
-        onTap: () => EditarAlarme.navegar(context),
+        onTap: () => EditarAlarme.navegar(context, alarme: alarme),
         onLongPress: () {},
         child: Padding(
           padding: const EdgeInsets.all(8),
@@ -37,7 +39,7 @@ class _AlarmeCardState extends State<AlarmeCard> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              textoCard('Nome do primeiro alarme'),
+              textoCard(alarme.nome),
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Column(
@@ -45,7 +47,7 @@ class _AlarmeCardState extends State<AlarmeCard> {
                   children: [
                     Container(
                       height: 1,
-                      color: Colors.orange,
+                      color: alarme.cor,
                     )
                   ],
                 ),
@@ -54,19 +56,19 @@ class _AlarmeCardState extends State<AlarmeCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    '12:34',
-                    style: TextStyle(fontSize: 24, color: Colors.white),
+                  Text(
+                    alarme.hora.toString(),
+                    style: const TextStyle(fontSize: 24, color: Colors.white),
                   ),
                   Switch(
-                    value: alarmeAtivado,
+                    value: alarme.ativado,
                     thumbColor:
                         const MaterialStatePropertyAll<Color>(Colors.white),
                     activeColor: Colors.blueGrey.shade50,
                     onChanged: (value) {
                       setState(
                         () {
-                          alarmeAtivado = value;
+                          alarme.ativado = value;
                         },
                       );
                     },

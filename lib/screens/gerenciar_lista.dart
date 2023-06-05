@@ -2,8 +2,10 @@ import 'package:alarme_pi/screens/editar_alarme.dart';
 import 'package:alarme_pi/screens/login.dart';
 import 'package:alarme_pi/widgets/calendario.dart';
 import 'package:alarme_pi/widgets/card_alarme.dart';
+import 'package:alarme_pi/state/global.dart';
 import 'package:flutter/material.dart';
 
+/*
 class TelaPrincipal extends StatefulWidget {
   const TelaPrincipal({Key? key}) : super(key: key);
 
@@ -22,12 +24,30 @@ class TelaPrincipal extends StatefulWidget {
   @override
   State<TelaPrincipal> createState() => _TelaPrincipalState();
 }
+*/
 
-class _TelaPrincipalState extends State<TelaPrincipal> {
+//class _TelaPrincipalState extends State<TelaPrincipal> {
+class TelaPrincipal extends StatelessWidget {
+  const TelaPrincipal({super.key});
+
+  static void navegar(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const TelaPrincipal()),
+    );
+  }
+
+  static void sair(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const LoginTela()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
+    List<Widget> alarmes = gerarAlarmeCard();
 
     return DefaultTabController(
       initialIndex: 0,
@@ -54,12 +74,16 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         ),
         body: TabBarView(
           children: <Widget>[
-            ListView(
-              children: const [
-                AlarmeCard(),
-                AlarmeCard(),
-              ],
-            ),
+            (alarmes.isEmpty)
+                ? const Center(
+                    child: Text(
+                      "Adicione um novo alarme",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )
+                : ListView(
+                    children: alarmes, // Gerar apenas uma vez?
+                  ),
             Padding(
               padding: EdgeInsets.only(
                 top: 0.05 * height,
@@ -104,7 +128,10 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         floatingActionButton: FloatingActionButton(
-          onPressed: () => EditarAlarme.navegar(context, criar: true),
+          //onPressed: () => setState(() {
+          //  criarAlarme(context);
+          //}),
+          onPressed: () => criarAlarme(context),
           backgroundColor: Colors.blueGrey.shade400,
           child: const Icon(Icons.add),
         ),
