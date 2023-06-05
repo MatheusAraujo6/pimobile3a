@@ -1,15 +1,20 @@
-int _teste(int num) {
-  return num + 1;
-}
+import 'package:alarme_pi/data/alarme.dart';
+import 'package:alarme_pi/widgets/card_alarme.dart';
 
 class GlobalState {
   GlobalState._privateConstructor();
 
   static final GlobalState instance = GlobalState._privateConstructor();
 
-  int counter = 0;
+  List<Alarme> alarmes = [];
+}
 
-  void increaseCounter() {
-    counter += _teste(2);
+List<AlarmeCard> gerarAlarmeCard() {
+  List<AlarmeCard> cards = [];
+
+  for (var alarme in GlobalState.instance.alarmes) {
+    //cards.add(AlarmeCard(alarme));
   }
+
+  return cards;
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../screens/editar_alarme.dart';
+import 'package:alarme_pi/screens/editar_alarme.dart';
+import 'package:alarme_pi/data/alarme.dart';
 
 class AlarmeCard extends StatefulWidget {
   const AlarmeCard({Key? key}) : super(key: key);

@@ -7,9 +7,13 @@ class EditarAlarme extends StatefulWidget {
 
   const EditarAlarme({Key? key, this.modoCriar = false}) : super(key: key);
 
-  static void navegar(BuildContext context) {
+  static void navegar(BuildContext context, {bool criar = false}) {
     Navigator.of(context).push(
-      MaterialPageRoute(builder: ((context) => const EditarAlarme())),
+      MaterialPageRoute(
+        builder: ((context) => EditarAlarme(
+              modoCriar: criar,
+            )),
+      ),
     );
   }
 
@@ -77,6 +81,13 @@ class _EditarAlarmeState extends State<EditarAlarme> {
 
   @override
   Widget build(BuildContext context) {
+    _modoCriar = widget.modoCriar;
+    List<Widget> botaoSalvar = [];
+    if (_modoCriar) {
+      botaoSalvar.add(
+        IconButton(onPressed: () {}, icon: const Icon(Icons.check)),
+      );
+    }
     List<Widget> radioSemana = [];
 
     for (int i = 0; i < 7; i++) {
@@ -88,21 +99,17 @@ class _EditarAlarmeState extends State<EditarAlarme> {
       radioSemana.add(novoRadio);
     }
 
-    _modoCriar = widget.modoCriar;
+    //_modoCriar = widget.modoCriar;
 
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade900,
       appBar: AppBar(
         backgroundColor: Colors.blueGrey.shade800,
-        title: _modoCriar
-            ? const Text(
-                "Criar alarme",
-                style: TextStyle(color: Colors.white),
-              )
-            : const Text(
-                "Editar alarme",
-                style: TextStyle(color: Colors.white),
-              ),
+        title: Text(
+          _modoCriar ? "Adicionar alarme" : "Editar Alarme",
+          style: const TextStyle(color: Colors.white),
+        ),
+        actions: botaoSalvar,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,

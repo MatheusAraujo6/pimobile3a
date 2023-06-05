@@ -104,7 +104,7 @@ class _TelaPrincipalState extends State<TelaPrincipal> {
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         floatingActionButton: FloatingActionButton(
-          onPressed: () => EditarAlarme.navegar(context),
+          onPressed: () => EditarAlarme.navegar(context, criar: true),
           backgroundColor: Colors.blueGrey.shade400,
           child: const Icon(Icons.add),
         ),
