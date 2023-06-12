@@ -91,38 +91,7 @@ class TelaPrincipal extends StatelessWidget {
                 right: 0.0667 * width,
                 bottom: 0.1 * height,
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 0.05 * height),
-                    child: Row(
-                      children: [
-                        const Text(
-                          'Abril 2023',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 32,
-                          ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          onPressed: () {},
-                          color: Colors.white,
-                          icon: const Icon(Icons.arrow_upward),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          color: Colors.white,
-                          icon: const Icon(Icons.arrow_downward),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Calendario(),
-                ],
-              ),
+              child: Calendario(),
             ),
           ],
         ),

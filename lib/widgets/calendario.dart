@@ -102,20 +102,30 @@ class DiaCalendario extends StatelessWidget {
   }
 }
 
-class Calendario extends StatelessWidget {
-  final bool compacto;
+class Calendario extends StatefulWidget {
+  const Calendario({super.key});
 
-  const Calendario({super.key, this.compacto = false});
+  @override
+  State<Calendario> createState() => _CalendarioState();
+}
 
-  Widget gerarMes(int diaInicial) {
+class _CalendarioState extends State<Calendario> {
+  //final bool compacto;
+  final DateTime dataHoje = DateTime.now();
+  DateTime data = DateTime.now();
+
+  //Calendario({super.key, this.compacto = false});
+
+  Widget gerarMes(DateTime hoje) {
+    List<int> dias = diasMes(hoje);
     List<Widget> linhas = [];
 
-    for (int i = diaInicial; i <= diaInicial + 35; i = i + 7) {
+    for (int i = 0; i <= 35; i = i + 7) {
       List<Widget> semana = [];
       for (int j = 0; j < 7; j++) {
         semana.add(DiaCalendario(
-          dia: i + j,
-          modoCompacto: compacto,
+          dia: dias[i + j],
+          modoCompacto: false,
         ));
       }
       Expanded linha = Expanded(child: Row(children: semana));
@@ -129,8 +139,129 @@ class Calendario extends StatelessWidget {
     );
   }
 
+  bool isLeapYear(int year) {
+    if ((year % 4) == 0) {
+      if ((year % 100) == 0) {
+        if ((year % 400) == 0) {
+          return true;
+        }
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  int primeiroDia(DateTime hoje) {
+    // Baseado na Doomsday rule
+    final DateTime primeiro = DateTime(hoje.year, hoje.month, 1);
+    final DateTime doomsday = DateTime(hoje.year, 4, 4);
+    final int ano = hoje.year;
+    final int ancora =
+        2 + ano + (ano / 4).floor() - (ano / 100).floor() + (ano / 400).floor();
+
+    final int dif = primeiro.difference(doomsday).inDays;
+    //return (((dif % ancora + ancora) % ancora) % 7 + (ancora % 7)) % 7;
+    return (dif % 7 + (ancora % 7)) % 7;
+  }
+
+  List<int> diasMes(DateTime hoje) {
+    const Set<int> mesTrintaDias = {4, 6, 9, 11};
+    List<int> diasMes = [];
+    late int diaFinal;
+
+    // Adicionar dias do mês
+    if (hoje.month == 2) {
+      diaFinal = isLeapYear(hoje.year) ? 29 : 28;
+    } else {
+      diaFinal = mesTrintaDias.contains(hoje.month) ? 30 : 31;
+    }
+
+    for (int i = 1; i <= diaFinal; i++) {
+      diasMes.add(i);
+    }
+
+    int primeiroDiaSemana = primeiroDia(hoje);
+
+    // Adicionar dias antes para preencher calendário
+    if (primeiroDiaSemana != 0) {
+      int mesAnterior = hoje.month - 1; // Mês 0 volta para o ano anterior
+      late int diaFinal;
+
+      if (mesAnterior == 2) {
+        diaFinal = isLeapYear(hoje.year) ? 29 : 28;
+      } else {
+        diaFinal = mesTrintaDias.contains(mesAnterior) ? 30 : 31;
+      }
+
+      for (int i = 0; i < primeiroDiaSemana; i++) {
+        diasMes.insert(0, diaFinal - i);
+      }
+    }
+
+    // Adicionar dias após para preencher calendário
+    for (int i = 1; diasMes.length < 42; i++) {
+      diasMes.add(i);
+    }
+
+    return diasMes;
+  }
+
+  String mesPorExtenso(int mes) {
+    const List<String> meses = [
+      "Inválido",
+      "Janeiro",
+      "Fevereiro",
+      "Março",
+      "Abril",
+      "Maio",
+      "Junho",
+      "Julho",
+      "Agosto",
+      "Setembro",
+      "Outubro",
+      "Novembro",
+      "Dezembro"
+    ];
+
+    return meses[mes];
+  }
+
+  void alterarMes(int delta) {
+    setState(() {
+      data = DateTime(data.year, data.month + delta, 28);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Flexible(child: gerarMes(26));
+    //return Flexible(child: gerarMes(26));
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              "${mesPorExtenso(data.month)} ${data.year}",
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 32,
+              ),
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: () => alterarMes(-1),
+              color: Colors.white,
+              icon: const Icon(Icons.arrow_upward),
+            ),
+            IconButton(
+              onPressed: () => alterarMes(1),
+              color: Colors.white,
+              icon: const Icon(Icons.arrow_downward),
+            ),
+          ],
+        ),
+        Flexible(child: gerarMes(data)),
+      ],
+    );
   }
 }

@@ -145,33 +145,7 @@ class _EditarAlarmeState extends State<EditarAlarme> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(height: 5),
-          Padding(
-            padding: const EdgeInsets.only(left: 8, right: 8, bottom: 5),
-            child: Row(
-              // Header calendário
-              children: [
-                const Text(
-                  'Abril 2023',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
-                  ),
-                ),
-                const Spacer(),
-                IconButton(
-                  onPressed: () {},
-                  color: Colors.white,
-                  icon: const Icon(Icons.arrow_upward),
-                ),
-                IconButton(
-                  onPressed: () {},
-                  color: Colors.white,
-                  icon: const Icon(Icons.arrow_downward),
-                ),
-              ],
-            ),
-          ),
-          const Calendario(compacto: true),
+          Flexible(child: Calendario()),
           Card(
             color: Colors.blueGrey,
             child: Padding(
