@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DiaCalendario extends StatelessWidget {
-  final int dia;
+  final String dia;
   final bool modoCompacto;
-  const DiaCalendario({super.key, this.dia = 0, this.modoCompacto = false});
+  const DiaCalendario({super.key, this.dia = "", this.modoCompacto = false});
 
   Widget textoDia() {
     return Expanded(
@@ -11,7 +11,7 @@ class DiaCalendario extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            (dia % 32).toString(),
+            dia,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 14,
@@ -33,12 +33,11 @@ class DiaCalendario extends StatelessWidget {
   }
 
   Widget diaCompacto() {
-    int diaCorrigido = dia % 32;
     Color corDia = Colors.white;
 
-    if ((dia % 7) == 0) {
-      corDia = Colors.redAccent;
-    }
+    //if ((dia % 7) == 0) {
+    //  corDia = Colors.redAccent;
+    //}
 
     return Expanded(
       child: Container(
@@ -48,7 +47,7 @@ class DiaCalendario extends StatelessWidget {
           border: Border.all(),
         ),
         child: Text(
-          diaCorrigido.toString(),
+          dia,
           style: TextStyle(color: corDia),
         ),
       ),
@@ -65,17 +64,14 @@ class DiaCalendario extends StatelessWidget {
     List<Widget> linhas = [];
     meuContainer.add(textoDia());
 
-    int offset = dia + 1;
-    int offset2 = dia + 0;
+    //if ((offset % 7) == 0) {
+    //  linhas.add(linhaAlarme(Colors.orange));
+    //  linhas.add(linhaAlarme(Colors.greenAccent));
+    //}
 
-    if ((offset % 7) == 0) {
-      linhas.add(linhaAlarme(Colors.orange));
-      linhas.add(linhaAlarme(Colors.greenAccent));
-    }
-
-    if ((offset2 % 7) == 0) {
-      linhas.add(linhaAlarme(Colors.greenAccent));
-    }
+    //if ((offset2 % 7) == 0) {
+    //  linhas.add(linhaAlarme(Colors.greenAccent));
+    //}
 
     Widget colunaLinhas = Expanded(
       child: Column(
@@ -103,7 +99,8 @@ class DiaCalendario extends StatelessWidget {
 }
 
 class Calendario extends StatefulWidget {
-  const Calendario({super.key});
+  final bool compacto;
+  const Calendario({super.key, this.compacto = false});
 
   @override
   State<Calendario> createState() => _CalendarioState();
@@ -116,19 +113,20 @@ class _CalendarioState extends State<Calendario> {
 
   //Calendario({super.key, this.compacto = false});
 
-  Widget gerarMes(DateTime hoje) {
+  Widget gerarMes(DateTime hoje, bool compacto) {
     List<int> dias = diasMes(hoje);
     List<Widget> linhas = [];
+    //linhas.add(Expanded(child: cabecalho()));
 
     for (int i = 0; i <= 35; i = i + 7) {
       List<Widget> semana = [];
       for (int j = 0; j < 7; j++) {
         semana.add(DiaCalendario(
-          dia: dias[i + j],
-          modoCompacto: false,
+          dia: dias[i + j].toString(),
+          modoCompacto: compacto,
         ));
       }
-      Expanded linha = Expanded(child: Row(children: semana));
+      Widget linha = Expanded(child: Row(children: semana));
       linhas.add(linha);
     }
 
@@ -233,6 +231,40 @@ class _CalendarioState extends State<Calendario> {
     });
   }
 
+  Widget diaCabecalho(String dia) {
+    return Expanded(
+      child: Container(
+        //height: 30,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.blueGrey.shade800,
+          border: Border.all(width: 1),
+        ),
+        child: Text(
+          dia,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget cabecalho() {
+    return Row(
+      children: [
+        diaCabecalho("D"),
+        diaCabecalho("S"),
+        diaCabecalho("T"),
+        diaCabecalho("Q"),
+        diaCabecalho("Q"),
+        diaCabecalho("S"),
+        diaCabecalho("S"),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //return Flexible(child: gerarMes(26));
@@ -260,7 +292,13 @@ class _CalendarioState extends State<Calendario> {
             ),
           ],
         ),
-        Flexible(child: gerarMes(data)),
+        //Row(
+        //  children: [
+        //    Flexible(child: DiaCalendario(dia: "D")),
+        //  ],
+        //),
+        cabecalho(),
+        Flexible(child: gerarMes(data, widget.compacto)),
       ],
     );
   }

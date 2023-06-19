@@ -146,7 +146,7 @@ class _EditarAlarmeState extends State<EditarAlarme> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(height: 5),
-          Flexible(child: Calendario()),
+          Flexible(child: Calendario(compacto: true)),
           Card(
             color: Colors.blueGrey,
             child: Padding(
