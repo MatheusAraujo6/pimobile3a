@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:alarme_pi/widgets/calendario.dart';
 import 'package:alarme_pi/widgets/custom_radio.dart';
 import 'package:alarme_pi/data/alarme.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class EditarAlarme extends StatefulWidget {
   final bool modoCriar;

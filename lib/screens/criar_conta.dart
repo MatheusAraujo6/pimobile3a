@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'gerenciar_lista.dart';
+import 'package:alarme_pi/screens/login.dart';
 import '../widgets/caixa_texto.dart';
 import '../widgets/botao_custom.dart';
 import '../widgets/label_entrada.dart';
@@ -8,7 +9,7 @@ class CriarConta extends StatefulWidget {
   const CriarConta({Key? key}) : super(key: key);
 
   static void navegar(BuildContext context) {
-    Navigator.of(context).push(
+    Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const CriarConta()),
     );
   }
@@ -27,6 +28,10 @@ class _CriarContaState extends State<CriarConta> {
       backgroundColor: Colors.blueGrey.shade900,
       appBar: AppBar(
         title: const Text("Criar conta"),
+        leading: IconButton(
+          onPressed: () => LoginTela.navegar(context),
+          icon: const Icon(Icons.arrow_back),
+        ),
         backgroundColor: Colors.blueGrey.shade800,
       ),
       body: Padding(

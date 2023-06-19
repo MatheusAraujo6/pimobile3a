@@ -8,6 +8,12 @@ import '../widgets/botao_custom.dart';
 class LoginTela extends StatefulWidget {
   const LoginTela({Key? key}) : super(key: key);
 
+  static void navegar(BuildContext context) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const LoginTela()),
+    );
+  }
+
   @override
   State<LoginTela> createState() => _LoginTelaState();
 }
