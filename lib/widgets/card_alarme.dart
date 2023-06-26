@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:alarme_pi/screens/editar_alarme.dart';
 import 'package:alarme_pi/data/alarme.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
-class AlarmeCard extends StatefulWidget {
+class AlarmeCard extends StatelessWidget {
   final Alarme alarme;
-  const AlarmeCard({Key? key, required this.alarme}) : super(key: key);
 
-  @override
-  State<AlarmeCard> createState() => _AlarmeCardState();
-}
-
-class _AlarmeCardState extends State<AlarmeCard> {
-  bool alarmeAtivado = false;
+  const AlarmeCard({super.key, required this.alarme});
 
   Text textoCard(String texto) {
     return Text(
@@ -22,11 +17,6 @@ class _AlarmeCardState extends State<AlarmeCard> {
 
   @override
   Widget build(BuildContext context) {
-    //double width = MediaQuery.of(context).size.width;
-    //double height = MediaQuery.of(context).size.height;
-    //double card_tamanho = 0.833 * width;
-    Alarme alarme = widget.alarme;
-
     return Card(
       clipBehavior: Clip.hardEdge,
       color: Colors.blueGrey,
@@ -57,25 +47,24 @@ class _AlarmeCardState extends State<AlarmeCard> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    alarme.hora.toString(),
+                    "${alarme.hora.hour.toString().padLeft(2, "0")}:${alarme.hora.minute}",
                     style: const TextStyle(fontSize: 24, color: Colors.white),
                   ),
-                  Switch(
-                    value: alarme.ativado,
-                    thumbColor:
-                        const MaterialStatePropertyAll<Color>(Colors.white),
-                    activeColor: Colors.blueGrey.shade50,
-                    onChanged: (value) {
-                      setState(
-                        () {
-                          alarme.ativado = value;
-                        },
+                  Observer(
+                    builder: (_) {
+                      return Switch(
+                        value: alarme.ativado,
+                        thumbColor:
+                            const MaterialStatePropertyAll<Color>(Colors.white),
+                        activeColor: Colors.blueGrey.shade50,
+                        onChanged: (_) => alarme.switchAtivado(),
                       );
                     },
                   ),
                 ],
               ),
-              textoCard('Frequência de repetição do alarme'),
+              textoCard(alarme.diasSemanaString()),
+              textoCard("Nenhum intervalo de repetição definido"),
             ],
           ),
         ),

@@ -2,9 +2,11 @@ import 'package:alarme_pi/screens/gerenciar_lista.dart';
 import 'package:flutter/material.dart';
 import 'package:alarme_pi/widgets/calendario.dart';
 import 'package:alarme_pi/widgets/custom_radio.dart';
+import 'package:alarme_pi/widgets/card_editar_alarme.dart';
 import 'package:alarme_pi/data/alarme.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+/*
 class EditarAlarme extends StatefulWidget {
   final bool modoCriar;
   final Alarme alarme;
@@ -27,22 +29,65 @@ class EditarAlarme extends StatefulWidget {
   @override
   State<EditarAlarme> createState() => _EditarAlarmeState();
 }
+*/
 
-class _EditarAlarmeState extends State<EditarAlarme> {
-  bool _modoCriar = false;
-  bool customRadio = false;
-  List<bool> diasSemana = [false, false, false, false, false, false, false];
-  List<String> intervalos = [
-    "Nenhum",
-    "Dias alternados",
-    "A cada 2 dias",
-    "A cada 3 dias",
-    "A cada 4 dias",
-    "A cada 5 dias",
-    "A cada 6 dias",
-    "A cada 7 dias"
+class EditarAlarme extends StatelessWidget {
+  final Alarme alarme;
+  final bool modoCriar;
+
+  final List<Intervalo> intervalosEnum = [
+    Intervalo.nenhum,
+    Intervalo.um,
+    Intervalo.dois,
+    Intervalo.tres,
+    Intervalo.quatro,
+    Intervalo.cinco,
+    Intervalo.seis,
+    Intervalo.sete,
   ];
-  List<String> opcoesSoneca = [
+
+  EditarAlarme({super.key, required this.alarme, this.modoCriar = false}) {
+    for (int i = 0; i < 8; i++) {
+      PopupMenuItem<Intervalo> novo = PopupMenuItem(
+        value: intervalosEnum[i],
+        child: Text(alarme.intervaloString(intervalo: intervalosEnum[i])),
+      );
+      itensMenuIntervalo.add(novo);
+    }
+
+    for (int i = 0; i < 5; i++) {
+      PopupMenuItem<Soneca> novo =
+          PopupMenuItem(value: Soneca.desativada, child: Text(opcoesSoneca[i]));
+      itensMenuSoneca.add(novo);
+    }
+
+    PopupMenuItem<String> padrao = const PopupMenuItem(
+      value: "Padrão do sistema",
+      child: Text("Padrão do sistema"),
+    );
+    PopupMenuItem<String> outros = const PopupMenuItem(
+      value: "Outro",
+      child: Text("Outro"),
+    );
+    itensMenuRingtones.add(padrao);
+    itensMenuRingtones.add(outros);
+  }
+
+  static void navegar(BuildContext context,
+      {bool criar = false, required Alarme alarme}) {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: ((context) => EditarAlarme(
+              modoCriar: criar,
+              alarme: alarme,
+            )),
+      ),
+    );
+  }
+
+  //List<bool> diasSemana = [false, false, false, false, false, false, false];
+
+  final List<String> opcoesSoneca = [
     "Desativada",
     "a cada minuto",
     "a cada 3 minutos",
@@ -50,91 +95,18 @@ class _EditarAlarmeState extends State<EditarAlarme> {
     "a cada 10 minutos",
   ];
 
-  List<PopupMenuEntry> itensMenuPopUp = [];
-  List<PopupMenuEntry> itensMenuRingtones = [];
-  List<PopupMenuEntry> itensMenuSoneca = [];
-  bool switchRingtone = true;
-  bool switchVibracao = true;
-
-  _EditarAlarmeState() {
-    for (int i = 0; i < 8; i++) {
-      PopupMenuItem novo = PopupMenuItem(value: i, child: Text(intervalos[i]));
-      itensMenuPopUp.add(novo);
-    }
-
-    for (int i = 0; i < 5; i++) {
-      PopupMenuItem novo =
-          PopupMenuItem(value: i, child: Text(opcoesSoneca[i]));
-      itensMenuSoneca.add(novo);
-    }
-
-    PopupMenuItem padrao = const PopupMenuItem(
-      value: 0,
-      child: Text("Padrão do sistema"),
-    );
-    PopupMenuItem outros = const PopupMenuItem(
-      value: 1,
-      child: Text("Aqui teremos outros ringtones"),
-    );
-    itensMenuRingtones.add(padrao);
-    itensMenuRingtones.add(outros);
-  }
-
-  void alterarEstadoSemana(int dia) {
-    setState(() {
-      diasSemana[dia] = !diasSemana[dia];
-    });
-  }
-
-  Widget construirHora(BuildContext context, Alarme alarme, Widget origem) {
-    return TextButton(
-      child: Text(
-        alarme.hora.toString(),
-        style: TextStyle(
-          color: Colors.blueGrey.shade50,
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      onPressed: () async {
-        Future<TimeOfDay?> novaHora = showDialog<TimeOfDay?>(
-          context: context,
-          builder: (BuildContext context) {
-            return TimePickerDialog(initialTime: alarme.hora);
-          },
-        );
-
-        alarme.hora = (await novaHora)!;
-        origem = construirHora(context, alarme, origem);
-      },
-    );
-  }
+  final List<PopupMenuEntry<Intervalo>> itensMenuIntervalo = [];
+  final List<PopupMenuEntry<String>> itensMenuRingtones = [];
+  final List<PopupMenuEntry<Soneca>> itensMenuSoneca = [];
 
   @override
   Widget build(BuildContext context) {
-    Alarme alarme = widget.alarme;
-    _modoCriar = widget.modoCriar;
-    List<Widget> radioSemana = [];
-    Widget hora = const Placeholder();
-    hora = construirHora(context, alarme, hora);
-
-    for (int i = 0; i < 7; i++) {
-      Widget novoRadio = RadioCustom(
-        dia: i,
-        valor: diasSemana[i],
-        radioCallback: () => alterarEstadoSemana(i),
-      );
-      radioSemana.add(novoRadio);
-    }
-
-    //_modoCriar = widget.modoCriar;
-
     return Scaffold(
       backgroundColor: Colors.blueGrey.shade900,
       appBar: AppBar(
         backgroundColor: Colors.blueGrey.shade800,
         title: Text(
-          _modoCriar ? "Adicionar alarme" : "Editar Alarme",
+          modoCriar ? "Adicionar alarme" : "Editar Alarme",
           style: const TextStyle(color: Colors.white),
         ),
         leading: IconButton(
@@ -147,203 +119,247 @@ class _EditarAlarmeState extends State<EditarAlarme> {
         children: [
           Container(height: 5),
           Flexible(child: Calendario(compacto: true)),
-          Card(
-            color: Colors.blueGrey,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  const Icon(Icons.alarm, color: Colors.white),
-                  Container(width: 5),
-                  const Text(
-                    "Horário",
-                    style: TextStyle(color: Colors.white, fontSize: 15),
-                  ),
-                  const Spacer(),
-                  hora,
-                ],
-              ),
-            ),
-          ),
-          Card(
-            color: Colors.blueGrey,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8, bottom: 5),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.edit,
-                    color: Colors.white,
-                  ),
-                  Container(width: 5),
-                  Flexible(
-                    child: TextField(
-                      controller: TextEditingController(text: alarme.nome),
-                      //decoration: const InputDecoration(
-                      //  border: UnderlineInputBorder(),
-                      //  hintText: "Nome do alarme",
-                      //  hintStyle: TextStyle(color: Colors.white),
-                      //),
-                      style: const TextStyle(color: Colors.white),
-                      onChanged: (String novoNome) async {
-                        alarme.nome = novoNome;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Card(
-            color: Colors.blueGrey,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.date_range, color: Colors.white),
-                      Container(width: 5),
-                      const Text(
-                        "A cada Seg, Ter, Qua",
-                        style: TextStyle(color: Colors.white, fontSize: 15),
-                      ),
-                    ],
-                  ),
-                  Container(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: radioSemana,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Card(
-            color: Colors.blueGrey,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  const Icon(Icons.replay, color: Colors.white),
-                  Container(width: 5),
-                  const Text(
-                    "Intervalo de repetição",
-                    style: TextStyle(color: Colors.white, fontSize: 15),
-                  ),
-                  const Spacer(),
-                  PopupMenuButton(
-                    itemBuilder: (BuildContext context) => itensMenuPopUp,
+          cardEditar(
+            // Borda antiga
+            filho: Row(
+              children: [
+                const Icon(Icons.alarm, color: Colors.white),
+                Container(width: 5),
+                const Text(
+                  "Horário",
+                  style: TextStyle(color: Colors.white, fontSize: 15),
+                ),
+                const Spacer(),
+                Observer(builder: (_) {
+                  return TextButton(
+                    onPressed: () async {
+                      Future<TimeOfDay?> novaHora = showDialog<TimeOfDay?>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return TimePickerDialog(initialTime: alarme.hora);
+                        },
+                      );
+
+                      alarme.alterarHora((await novaHora)!);
+                    },
                     child: Text(
-                      "Nenhum",
-                      style: TextStyle(color: Colors.blueGrey.shade50),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Card(
-            color: Colors.blueGrey,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  const Icon(Icons.bedtime_outlined, color: Colors.white),
-                  Container(width: 5),
-                  const Text(
-                    "Função soneca",
-                    style: TextStyle(color: Colors.white, fontSize: 15),
-                  ),
-                  const Spacer(),
-                  PopupMenuButton(
-                    itemBuilder: (BuildContext context) => itensMenuSoneca,
-                    child: Text(
-                      "a cada 5 minutos",
-                      style: TextStyle(color: Colors.blueGrey.shade50),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Card(
-            color: Colors.blueGrey,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.music_note, color: Colors.white),
-                          Container(width: 5),
-                          const Text(
-                            "Toque musical",
-                            style: TextStyle(color: Colors.white, fontSize: 15),
-                          ),
-                        ],
+                      "${alarme.hora.hour.toString().padLeft(2, "0")}:${alarme.hora.minute}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Container(height: 10),
-                      PopupMenuButton(
-                        itemBuilder: (BuildContext context) =>
-                            itensMenuRingtones,
-                        child: Text(
-                          "Padrão do sistema",
-                          style: TextStyle(color: Colors.blue.shade50),
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+          cardEditar(
+            // Borda antinga
+            filho: Row(
+              children: [
+                const Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                ),
+                Container(width: 5),
+                Flexible(
+                  child: TextField(
+                    controller: TextEditingController(text: alarme.nome),
+                    style: const TextStyle(color: Colors.white),
+                    onChanged: (String novoNome) async {
+                      alarme.nome = novoNome;
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          cardEditar(
+            filho: Observer(
+              builder: (_) {
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.date_range, color: Colors.white),
+                        Container(width: 5),
+                        Text(
+                          alarme.diasSemanaString(),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 15),
                         ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Center(
-                    child: Switch(
-                      value: switchRingtone,
-                      thumbColor:
-                          const MaterialStatePropertyAll<Color>(Colors.white),
-                      activeColor: Colors.blueGrey.shade50,
-                      onChanged: (value) {
-                        setState(() {
-                          switchRingtone = value;
-                        });
-                      },
+                      ],
                     ),
-                  ),
-                ],
-              ),
+                    Container(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        RadioCustom(
+                          dia: 0,
+                          valor: alarme.diasSemana[0],
+                          radioCallback: () => alarme.alterarDia(0),
+                        ),
+                        RadioCustom(
+                          dia: 1,
+                          valor: alarme.diasSemana[1],
+                          radioCallback: () => alarme.alterarDia(1),
+                        ),
+                        RadioCustom(
+                          dia: 2,
+                          valor: alarme.diasSemana[2],
+                          radioCallback: () => alarme.alterarDia(2),
+                        ),
+                        RadioCustom(
+                          dia: 3,
+                          valor: alarme.diasSemana[3],
+                          radioCallback: () => alarme.alterarDia(3),
+                        ),
+                        RadioCustom(
+                          dia: 4,
+                          valor: alarme.diasSemana[4],
+                          radioCallback: () => alarme.alterarDia(4),
+                        ),
+                        RadioCustom(
+                          dia: 5,
+                          valor: alarme.diasSemana[5],
+                          radioCallback: () => alarme.alterarDia(5),
+                        ),
+                        RadioCustom(
+                          dia: 6,
+                          valor: alarme.diasSemana[6],
+                          radioCallback: () => alarme.alterarDia(6),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
             ),
           ),
-          Card(
-            color: Colors.blueGrey,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  const Icon(Icons.vibration, color: Colors.white),
-                  Container(width: 9),
-                  const Text(
-                    "Vibração",
-                    style: TextStyle(color: Colors.white),
+          cardEditar(
+            filho: Row(
+              children: [
+                const Icon(Icons.replay, color: Colors.white),
+                Container(width: 5),
+                const Text(
+                  "Intervalo de repetição",
+                  style: TextStyle(color: Colors.white, fontSize: 15),
+                ),
+                const Spacer(),
+                Observer(
+                  builder: (_) {
+                    return PopupMenuButton<Intervalo>(
+                      itemBuilder: (BuildContext context) => itensMenuIntervalo,
+                      child: Text(
+                        alarme.intervaloString(),
+                        style: TextStyle(color: Colors.blueGrey.shade50),
+                      ),
+                      onSelected: (Intervalo novoIntervalo) =>
+                          alarme.alterarRepeticao(novoIntervalo),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          cardEditar(
+            filho: Row(
+              children: [
+                const Icon(Icons.bedtime_outlined, color: Colors.white),
+                Container(width: 5),
+                const Text(
+                  "Função soneca",
+                  style: TextStyle(color: Colors.white, fontSize: 15),
+                ),
+                const Spacer(),
+                PopupMenuButton(
+                  itemBuilder: (BuildContext context) => itensMenuSoneca,
+                  child: Text(
+                    "a cada 5 minutos",
+                    style: TextStyle(color: Colors.blueGrey.shade50),
                   ),
-                  const Spacer(),
-                  SizedBox(
-                    height: 20,
-                    child: Switch(
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      thumbColor:
-                          const MaterialStatePropertyAll<Color>(Colors.white),
-                      activeColor: Colors.blueGrey.shade50,
-                      value: switchVibracao,
-                      onChanged: (value) {
-                        setState(() {
-                          switchVibracao = value;
-                        });
-                      },
-                    ),
+                ),
+              ],
+            ),
+          ),
+          cardEditar(
+            filho: Row(
+              children: [
+                Observer(
+                  builder: (_) {
+                    return Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.music_note, color: Colors.white),
+                            Container(width: 5),
+                            const Text(
+                              "Toque musical",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 15),
+                            ),
+                          ],
+                        ),
+                        Container(height: 10),
+                        PopupMenuButton<String>(
+                          itemBuilder: (BuildContext context) =>
+                              itensMenuRingtones,
+                          child: Text(
+                            alarme.toqueMusical,
+                            style: TextStyle(color: Colors.blue.shade50),
+                          ),
+                          onSelected: (String novoToque) =>
+                              alarme.alterarToque(novoToque),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const Spacer(),
+                Center(
+                  child: Observer(
+                    builder: (_) {
+                      return Switch(
+                        value: alarme.toqueAtivado,
+                        thumbColor:
+                            const MaterialStatePropertyAll<Color>(Colors.white),
+                        activeColor: Colors.blueGrey.shade50,
+                        onChanged: (_) => alarme.switchToque(), // Errado?
+                      );
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
+          ),
+          cardEditar(
+            filho: Row(
+              children: [
+                const Icon(Icons.vibration, color: Colors.white),
+                Container(width: 9),
+                const Text(
+                  "Vibração",
+                  style: TextStyle(color: Colors.white),
+                ),
+                const Spacer(),
+                SizedBox(
+                  height: 20,
+                  child: Observer(
+                    builder: (_) {
+                      return Switch(
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        thumbColor:
+                            const MaterialStatePropertyAll<Color>(Colors.white),
+                        activeColor: Colors.blueGrey.shade50,
+                        value: alarme.vibracaoAtivada,
+                        onChanged: (_) => alarme.switchVibracao(), // Errado?
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ],

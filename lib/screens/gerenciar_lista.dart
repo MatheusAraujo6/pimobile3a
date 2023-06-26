@@ -1,9 +1,10 @@
-import 'package:alarme_pi/screens/editar_alarme.dart';
 import 'package:alarme_pi/screens/login.dart';
 import 'package:alarme_pi/widgets/calendario.dart';
-import 'package:alarme_pi/widgets/card_alarme.dart';
 import 'package:alarme_pi/state/global.dart';
 import 'package:flutter/material.dart';
+import 'package:alarme_pi/state/user_store.dart';
+import 'package:mobx/mobx.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 /*
 class TelaPrincipal extends StatefulWidget {
@@ -28,11 +29,13 @@ class TelaPrincipal extends StatefulWidget {
 
 //class _TelaPrincipalState extends State<TelaPrincipal> {
 class TelaPrincipal extends StatelessWidget {
-  const TelaPrincipal({super.key});
+  //final store = UserStore();
+
+  TelaPrincipal({super.key});
 
   static void navegar(BuildContext context) {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const TelaPrincipal()),
+      MaterialPageRoute(builder: (context) => TelaPrincipal()),
     );
   }
 
@@ -74,16 +77,16 @@ class TelaPrincipal extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            (alarmes.isEmpty)
-                ? const Center(
-                    child: Text(
-                      "Adicione um novo alarme",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  )
-                : ListView(
-                    children: alarmes, // Gerar apenas uma vez?
-                  ),
+            Observer(builder: (_) {
+              return (store.cards.isEmpty)
+                  ? const Center(
+                      child: Text(
+                        "Adicione um novo alarme com o botão +",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    )
+                  : ListView(children: store.cards);
+            }),
             Padding(
               padding: EdgeInsets.only(
                 top: 0.05 * height,
@@ -100,7 +103,7 @@ class TelaPrincipal extends StatelessWidget {
           //onPressed: () => setState(() {
           //  criarAlarme(context);
           //}),
-          onPressed: () => criarAlarme(context),
+          onPressed: () => store.criarAlarme(context),
           backgroundColor: Colors.blueGrey.shade400,
           child: const Icon(Icons.add),
         ),
