@@ -1,19 +1,88 @@
+import 'package:alarme_pi/data/alarme.dart';
+import 'package:alarme_pi/state/user_store.dart';
 import 'package:flutter/material.dart';
 
 class DiaCalendario extends StatelessWidget {
-  final String dia;
+  final DiaSemana diaSem;
   final bool modoCompacto;
-  const DiaCalendario({super.key, this.dia = "", this.modoCompacto = false});
+  final DateTime hoje;
+  final Alarme? alarme;
+  const DiaCalendario({
+    super.key,
+    required this.diaSem,
+    required this.hoje,
+    this.modoCompacto = false,
+    this.alarme,
+  });
+
+  bool checarAtivado(Alarme alarme, DiaSemana diaSem) {
+    // Checar se o alarme está ativado
+    if (alarme.ativado == false) {
+      return false;
+    }
+
+    // Checar se o alarme está ativado para apenas hoje/amanhã
+    bool nenhumDia = !alarme.diasSemana.contains(true);
+
+    if (nenhumDia) {
+      int tempoAlarme = (alarme.hora.hour * 60) + alarme.hora.minute;
+      TimeOfDay temp = TimeOfDay.now();
+      int tempoAgora = (temp.hour * 60) + temp.minute;
+      DateTime today = DateTime.now();
+
+      if (tempoAgora > tempoAlarme) {
+        if ((diaSem.dia == today.day + 1) &&
+            (hoje.month == today.month) &&
+            (hoje.year == today.year) &&
+            (diaSem.mesDiferente == false)) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        if ((diaSem.dia == today.day) &&
+            (hoje.month == today.month) &&
+            (hoje.year == today.year) &&
+            (diaSem.mesDiferente == false)) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+
+    // Checa apenas os dias na semana
+    return alarme.diasSemana[diaSem.diaNaSemana];
+  }
+
+  bool checarHoje() {
+    if (diaSem.mesDiferente) {
+      return false;
+    }
+
+    DateTime today = DateTime.now();
+    return (diaSem.dia == today.day) &&
+        (hoje.month == today.month) &&
+        (hoje.year == today.year);
+  }
 
   Widget textoDia() {
+    late Color corDia;
+
+    if (checarHoje()) {
+      corDia = Colors.blueAccent;
+    } else {
+      corDia = diaSem.mesDiferente ? Colors.grey : Colors.white;
+    }
+
     return Expanded(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            dia,
-            style: const TextStyle(
-              color: Colors.white,
+            diaSem.dia.toString(),
+            style: TextStyle(
+              color: corDia,
               fontSize: 14,
             ),
           ),
@@ -33,11 +102,17 @@ class DiaCalendario extends StatelessWidget {
   }
 
   Widget diaCompacto() {
-    Color corDia = Colors.white;
+    late Color corDia;
 
-    //if ((dia % 7) == 0) {
-    //  corDia = Colors.redAccent;
-    //}
+    if (checarAtivado(alarme!, diaSem)) {
+      corDia = Colors.red; //
+    } else {
+      if (checarHoje()) {
+        corDia = Colors.blueAccent;
+      } else {
+        corDia = diaSem.mesDiferente ? Colors.grey : Colors.white;
+      }
+    }
 
     return Expanded(
       child: Container(
@@ -47,11 +122,23 @@ class DiaCalendario extends StatelessWidget {
           border: Border.all(),
         ),
         child: Text(
-          dia,
+          diaSem.dia.toString(),
           style: TextStyle(color: corDia),
         ),
       ),
     );
+  }
+
+  List<Widget> adicionarLinhas() {
+    List<Widget> linhas = [];
+
+    for (var alarme in store.alarmes) {
+      if (checarAtivado(alarme, diaSem)) {
+        linhas.add(linhaAlarme(alarme.cor));
+      }
+    }
+
+    return linhas;
   }
 
   @override
@@ -61,7 +148,7 @@ class DiaCalendario extends StatelessWidget {
     }
 
     List<Widget> meuContainer = [];
-    List<Widget> linhas = [];
+    List<Widget> linhas = adicionarLinhas();
     meuContainer.add(textoDia());
 
     //if ((offset % 7) == 0) {
@@ -98,9 +185,18 @@ class DiaCalendario extends StatelessWidget {
   }
 }
 
+class DiaSemana {
+  int dia;
+  int diaNaSemana; // 0 - Domingo, 1 - Segunda, ..., 6 - Sábado
+  bool mesDiferente;
+
+  DiaSemana(this.dia, this.diaNaSemana, {this.mesDiferente = false});
+}
+
 class Calendario extends StatefulWidget {
   final bool compacto;
-  const Calendario({super.key, this.compacto = false});
+  final Alarme? alarme;
+  const Calendario({super.key, this.compacto = false, this.alarme});
 
   @override
   State<Calendario> createState() => _CalendarioState();
@@ -113,8 +209,8 @@ class _CalendarioState extends State<Calendario> {
 
   //Calendario({super.key, this.compacto = false});
 
-  Widget gerarMes(DateTime hoje, bool compacto) {
-    List<int> dias = diasMes(hoje);
+  Widget gerarMes(DateTime hoje, bool compacto, Alarme? alarme) {
+    List<DiaSemana> dias = diasMes(hoje);
     List<Widget> linhas = [];
     //linhas.add(Expanded(child: cabecalho()));
 
@@ -122,8 +218,10 @@ class _CalendarioState extends State<Calendario> {
       List<Widget> semana = [];
       for (int j = 0; j < 7; j++) {
         semana.add(DiaCalendario(
-          dia: dias[i + j].toString(),
+          diaSem: dias[i + j],
           modoCompacto: compacto,
+          hoje: hoje,
+          alarme: alarme,
         ));
       }
       Widget linha = Expanded(child: Row(children: semana));
@@ -163,9 +261,9 @@ class _CalendarioState extends State<Calendario> {
     return (dif % 7 + (ancora % 7)) % 7;
   }
 
-  List<int> diasMes(DateTime hoje) {
+  List<DiaSemana> diasMes(DateTime hoje) {
     const Set<int> mesTrintaDias = {4, 6, 9, 11};
-    List<int> diasMes = [];
+    List<DiaSemana> diasMes = [];
     late int diaFinal;
 
     // Adicionar dias do mês
@@ -175,16 +273,16 @@ class _CalendarioState extends State<Calendario> {
       diaFinal = mesTrintaDias.contains(hoje.month) ? 30 : 31;
     }
 
-    for (int i = 1; i <= diaFinal; i++) {
-      diasMes.add(i);
-    }
+    final int primeiroDiaSemana = primeiroDia(hoje);
 
-    int primeiroDiaSemana = primeiroDia(hoje);
+    for (int i = 1; i <= diaFinal; i++) {
+      diasMes.add(DiaSemana(i, (primeiroDiaSemana + i - 1) % 7));
+    }
 
     // Adicionar dias antes para preencher calendário
     if (primeiroDiaSemana != 0) {
       int mesAnterior = hoje.month - 1; // Mês 0 volta para o ano anterior
-      late int diaFinal;
+      //late int diaFinal;
 
       if (mesAnterior == 2) {
         diaFinal = isLeapYear(hoje.year) ? 29 : 28;
@@ -192,14 +290,26 @@ class _CalendarioState extends State<Calendario> {
         diaFinal = mesTrintaDias.contains(mesAnterior) ? 30 : 31;
       }
 
+      int primeiroDiaMesAnterior =
+          primeiroDia(DateTime(hoje.year, hoje.month - 1, 28));
+
       for (int i = 0; i < primeiroDiaSemana; i++) {
-        diasMes.insert(0, diaFinal - i);
+        diasMes.insert(
+          0,
+          DiaSemana(
+              diaFinal - i, (primeiroDiaMesAnterior + (diaFinal - i) - 1) % 7,
+              mesDiferente: true),
+        );
       }
     }
 
+    int primeiroDiaProxMes =
+        primeiroDia(DateTime(hoje.year, hoje.month + 1, 28));
+
     // Adicionar dias após para preencher calendário
     for (int i = 1; diasMes.length < 42; i++) {
-      diasMes.add(i);
+      diasMes.add(
+          DiaSemana(i, (primeiroDiaProxMes + i - 1) % 7, mesDiferente: true));
     }
 
     return diasMes;
@@ -298,7 +408,7 @@ class _CalendarioState extends State<Calendario> {
         //  ],
         //),
         cabecalho(),
-        Flexible(child: gerarMes(data, widget.compacto)),
+        Flexible(child: gerarMes(data, widget.compacto, widget.alarme)),
       ],
     );
   }

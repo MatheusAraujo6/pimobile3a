@@ -1,3 +1,4 @@
+import 'package:alarme_pi/state/user_store.dart';
 import 'package:flutter/material.dart';
 import 'gerenciar_lista.dart';
 import 'criar_conta.dart';
@@ -90,7 +91,10 @@ class _LoginTelaState extends State<LoginTela> {
               height: 0.0625 * height,
               child: BotaoCustom(
                 label: 'Entrar',
-                funcionalidade: () => TelaPrincipal.navegar(context),
+                funcionalidade: () {
+                  store = UserStore(); // Nova instância
+                  TelaPrincipal.navegar(context);
+                },
               ),
             ),
             SizedBox(

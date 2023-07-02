@@ -4,35 +4,6 @@ import 'package:mobx/mobx.dart';
 
 part 'alarme.g.dart';
 
-enum DiaSemana {
-  domingo,
-  segunda,
-  terca,
-  quarta,
-  quinta,
-  sexta,
-  sabado,
-}
-
-enum Intervalo {
-  nenhum,
-  um,
-  dois,
-  tres,
-  quatro,
-  cinco,
-  seis,
-  sete,
-}
-
-enum Soneca {
-  desativada,
-  umMinuto,
-  tresMinutos,
-  cincoMinutos,
-  dezMinutos,
-}
-
 //class Alarme = AlarmeBase with _$Alarme;
 class Alarme extends AlarmeBase with _$Alarme {
   Alarme() {
@@ -47,11 +18,15 @@ class Alarme extends AlarmeBase with _$Alarme {
 }
 
 abstract class AlarmeBase with Store {
+  // Usado apenas para regenerar o Calendário compacto
+  @observable
+  int dummy = 0;
+
   @observable
   bool ativado = true;
 
   @observable
-  String nome = "Nome do alarme";
+  String? nome;
 
   @observable
   TimeOfDay hora = const TimeOfDay(hour: 6, minute: 30);
@@ -63,10 +38,16 @@ abstract class AlarmeBase with Store {
   ObservableList<bool> diasSemana = ObservableList();
 
   @observable
-  Intervalo diasRepeticao = Intervalo.nenhum;
+  int diasRepeticao = 0;
 
   @observable
-  Soneca soneca = Soneca.desativada;
+  String diasRepeticaoStr = intervalos[0];
+
+  @observable
+  int soneca = 3;
+
+  @observable
+  String sonecaStr = sonecas[3];
 
   @observable
   String toqueMusical = "Padrão do sistema";
@@ -83,28 +64,37 @@ abstract class AlarmeBase with Store {
   }
 
   @action
-  void alterarNome(String novoNome) {
+  void alterarNome(String? novoNome) {
+    if ((novoNome == null) || novoNome.isEmpty || novoNome == "") {
+      nome = null;
+    }
+
     nome = novoNome;
   }
 
   @action
   void alterarHora(TimeOfDay novaHora) {
     hora = novaHora;
+    dummy += 1;
   }
 
   @action
   void alterarDia(int indice) {
     diasSemana[indice] = !diasSemana[indice];
+    dummy += 1;
   }
 
   @action
-  void alterarRepeticao(Intervalo novoIntervalo) {
+  void alterarRepeticao(int novoIntervalo) {
     diasRepeticao = novoIntervalo;
+    diasRepeticaoStr = intervalos[novoIntervalo];
+    dummy += 1;
   }
 
   @action
-  void alterarSoneca(Soneca novaSoneca) {
+  void alterarSoneca(int novaSoneca) {
     soneca = novaSoneca;
+    sonecaStr = sonecas[novaSoneca];
   }
 
   @action
@@ -165,23 +155,31 @@ abstract class AlarmeBase with Store {
     return dias;
   }
 
+  @action
+  String invervalosString() {
+    if (diasRepeticao == 0) {
+      return "Nenhum intervalo de reptição selecionado";
+    }
+
+    if (diasRepeticao == 1) {
+      return "Repetir em dias alternados";
+    }
+
+    return "Repetir ${diasRepeticaoStr.replaceFirst(RegExp("A"), "a")}";
+  }
+
   static const List<String> intervalos = [
     "Nenhum",
     "Dias alternados",
     "A cada 2 dias",
     "A cada 3 dias",
-    "A cada 4 dias",
-    "A cada 5 dias",
-    "A cada 6 dias",
-    "A cada 7 dias"
   ];
 
-  @action
-  String intervaloString({Intervalo? intervalo}) {
-    if (intervalo != null) {
-      return intervalos[intervalo.index];
-    }
-
-    return intervalos[diasRepeticao.index];
-  }
+  static const List<String> sonecas = [
+    "Desativada",
+    "A cada minuto",
+    "A cada 3 minutos",
+    "A cada 5 minutos",
+    "A cada 10 minutos"
+  ];
 }

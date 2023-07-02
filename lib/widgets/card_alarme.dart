@@ -29,7 +29,7 @@ class AlarmeCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              textoCard(alarme.nome),
+              textoCard(alarme.nome ?? "Sem nome"),
               Padding(
                 padding: const EdgeInsets.only(top: 4.0),
                 child: Column(
@@ -47,7 +47,7 @@ class AlarmeCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "${alarme.hora.hour.toString().padLeft(2, "0")}:${alarme.hora.minute}",
+                    "${alarme.hora.hour.toString().padLeft(2, "0")}:${alarme.hora.minute.toString().padLeft(2, "0")}",
                     style: const TextStyle(fontSize: 24, color: Colors.white),
                   ),
                   Observer(
@@ -64,7 +64,7 @@ class AlarmeCard extends StatelessWidget {
                 ],
               ),
               textoCard(alarme.diasSemanaString()),
-              textoCard("Nenhum intervalo de repetição definido"),
+              textoCard(alarme.invervalosString()),
             ],
           ),
         ),

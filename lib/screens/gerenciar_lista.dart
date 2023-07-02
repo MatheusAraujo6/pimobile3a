@@ -3,31 +3,8 @@ import 'package:alarme_pi/widgets/calendario.dart';
 import 'package:alarme_pi/state/global.dart';
 import 'package:flutter/material.dart';
 import 'package:alarme_pi/state/user_store.dart';
-import 'package:mobx/mobx.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-/*
-class TelaPrincipal extends StatefulWidget {
-  const TelaPrincipal({Key? key}) : super(key: key);
-
-  static void navegar(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const TelaPrincipal()),
-    );
-  }
-
-  static void sair(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const LoginTela()),
-    );
-  }
-
-  @override
-  State<TelaPrincipal> createState() => _TelaPrincipalState();
-}
-*/
-
-//class _TelaPrincipalState extends State<TelaPrincipal> {
 class TelaPrincipal extends StatelessWidget {
   //final store = UserStore();
 

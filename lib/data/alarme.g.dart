@@ -9,6 +9,21 @@ part of 'alarme.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$Alarme on AlarmeBase, Store {
+  late final _$dummyAtom = Atom(name: 'AlarmeBase.dummy', context: context);
+
+  @override
+  int get dummy {
+    _$dummyAtom.reportRead();
+    return super.dummy;
+  }
+
+  @override
+  set dummy(int value) {
+    _$dummyAtom.reportWrite(value, super.dummy, () {
+      super.dummy = value;
+    });
+  }
+
   late final _$ativadoAtom = Atom(name: 'AlarmeBase.ativado', context: context);
 
   @override
@@ -27,13 +42,13 @@ mixin _$Alarme on AlarmeBase, Store {
   late final _$nomeAtom = Atom(name: 'AlarmeBase.nome', context: context);
 
   @override
-  String get nome {
+  String? get nome {
     _$nomeAtom.reportRead();
     return super.nome;
   }
 
   @override
-  set nome(String value) {
+  set nome(String? value) {
     _$nomeAtom.reportWrite(value, super.nome, () {
       super.nome = value;
     });
@@ -74,30 +89,62 @@ mixin _$Alarme on AlarmeBase, Store {
       Atom(name: 'AlarmeBase.diasRepeticao', context: context);
 
   @override
-  Intervalo get diasRepeticao {
+  int get diasRepeticao {
     _$diasRepeticaoAtom.reportRead();
     return super.diasRepeticao;
   }
 
   @override
-  set diasRepeticao(Intervalo value) {
+  set diasRepeticao(int value) {
     _$diasRepeticaoAtom.reportWrite(value, super.diasRepeticao, () {
       super.diasRepeticao = value;
+    });
+  }
+
+  late final _$diasRepeticaoStrAtom =
+      Atom(name: 'AlarmeBase.diasRepeticaoStr', context: context);
+
+  @override
+  String get diasRepeticaoStr {
+    _$diasRepeticaoStrAtom.reportRead();
+    return super.diasRepeticaoStr;
+  }
+
+  @override
+  set diasRepeticaoStr(String value) {
+    _$diasRepeticaoStrAtom.reportWrite(value, super.diasRepeticaoStr, () {
+      super.diasRepeticaoStr = value;
     });
   }
 
   late final _$sonecaAtom = Atom(name: 'AlarmeBase.soneca', context: context);
 
   @override
-  Soneca get soneca {
+  int get soneca {
     _$sonecaAtom.reportRead();
     return super.soneca;
   }
 
   @override
-  set soneca(Soneca value) {
+  set soneca(int value) {
     _$sonecaAtom.reportWrite(value, super.soneca, () {
       super.soneca = value;
+    });
+  }
+
+  late final _$sonecaStrAtom =
+      Atom(name: 'AlarmeBase.sonecaStr', context: context);
+
+  @override
+  String get sonecaStr {
+    _$sonecaStrAtom.reportRead();
+    return super.sonecaStr;
+  }
+
+  @override
+  set sonecaStr(String value) {
+    _$sonecaStrAtom.reportWrite(value, super.sonecaStr, () {
+      super.sonecaStr = value;
     });
   }
 
@@ -164,7 +211,7 @@ mixin _$Alarme on AlarmeBase, Store {
   }
 
   @override
-  void alterarNome(String novoNome) {
+  void alterarNome(String? novoNome) {
     final _$actionInfo = _$AlarmeBaseActionController.startAction(
         name: 'AlarmeBase.alterarNome');
     try {
@@ -197,7 +244,7 @@ mixin _$Alarme on AlarmeBase, Store {
   }
 
   @override
-  void alterarRepeticao(Intervalo novoIntervalo) {
+  void alterarRepeticao(int novoIntervalo) {
     final _$actionInfo = _$AlarmeBaseActionController.startAction(
         name: 'AlarmeBase.alterarRepeticao');
     try {
@@ -208,7 +255,7 @@ mixin _$Alarme on AlarmeBase, Store {
   }
 
   @override
-  void alterarSoneca(Soneca novaSoneca) {
+  void alterarSoneca(int novaSoneca) {
     final _$actionInfo = _$AlarmeBaseActionController.startAction(
         name: 'AlarmeBase.alterarSoneca');
     try {
@@ -263,11 +310,11 @@ mixin _$Alarme on AlarmeBase, Store {
   }
 
   @override
-  String intervaloString({Intervalo? intervalo}) {
+  String invervalosString() {
     final _$actionInfo = _$AlarmeBaseActionController.startAction(
-        name: 'AlarmeBase.intervaloString');
+        name: 'AlarmeBase.invervalosString');
     try {
-      return super.intervaloString(intervalo: intervalo);
+      return super.invervalosString();
     } finally {
       _$AlarmeBaseActionController.endAction(_$actionInfo);
     }
@@ -276,12 +323,15 @@ mixin _$Alarme on AlarmeBase, Store {
   @override
   String toString() {
     return '''
+dummy: ${dummy},
 ativado: ${ativado},
 nome: ${nome},
 hora: ${hora},
 diasSemana: ${diasSemana},
 diasRepeticao: ${diasRepeticao},
+diasRepeticaoStr: ${diasRepeticaoStr},
 soneca: ${soneca},
+sonecaStr: ${sonecaStr},
 toqueMusical: ${toqueMusical},
 toqueAtivado: ${toqueAtivado},
 vibracaoAtivada: ${vibracaoAtivada}

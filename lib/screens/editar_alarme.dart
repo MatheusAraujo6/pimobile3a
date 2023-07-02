@@ -35,29 +35,18 @@ class EditarAlarme extends StatelessWidget {
   final Alarme alarme;
   final bool modoCriar;
 
-  final List<Intervalo> intervalosEnum = [
-    Intervalo.nenhum,
-    Intervalo.um,
-    Intervalo.dois,
-    Intervalo.tres,
-    Intervalo.quatro,
-    Intervalo.cinco,
-    Intervalo.seis,
-    Intervalo.sete,
-  ];
-
   EditarAlarme({super.key, required this.alarme, this.modoCriar = false}) {
-    for (int i = 0; i < 8; i++) {
-      PopupMenuItem<Intervalo> novo = PopupMenuItem(
-        value: intervalosEnum[i],
-        child: Text(alarme.intervaloString(intervalo: intervalosEnum[i])),
+    for (int i = 0; i < 4; i++) {
+      PopupMenuItem<int> novo = PopupMenuItem(
+        value: i,
+        child: Text(AlarmeBase.intervalos[i]),
       );
       itensMenuIntervalo.add(novo);
     }
 
     for (int i = 0; i < 5; i++) {
-      PopupMenuItem<Soneca> novo =
-          PopupMenuItem(value: Soneca.desativada, child: Text(opcoesSoneca[i]));
+      PopupMenuItem<int> novo =
+          PopupMenuItem(value: i, child: Text(AlarmeBase.sonecas[i]));
       itensMenuSoneca.add(novo);
     }
 
@@ -87,17 +76,9 @@ class EditarAlarme extends StatelessWidget {
 
   //List<bool> diasSemana = [false, false, false, false, false, false, false];
 
-  final List<String> opcoesSoneca = [
-    "Desativada",
-    "a cada minuto",
-    "a cada 3 minutos",
-    "a cada 5 minutos",
-    "a cada 10 minutos",
-  ];
-
-  final List<PopupMenuEntry<Intervalo>> itensMenuIntervalo = [];
+  final List<PopupMenuEntry<int>> itensMenuIntervalo = [];
   final List<PopupMenuEntry<String>> itensMenuRingtones = [];
-  final List<PopupMenuEntry<Soneca>> itensMenuSoneca = [];
+  final List<PopupMenuEntry<int>> itensMenuSoneca = [];
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +98,21 @@ class EditarAlarme extends StatelessWidget {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Container(height: 5),
-          Flexible(child: Calendario(compacto: true)),
+          //Container(height: 5),
+          Observer(builder: (_) {
+            return Flexible(
+              child: Stack(
+                children: [
+                  Text(
+                    alarme.dummy.toString(),
+                    style: TextStyle(color: Colors.blueGrey.shade900),
+                  ),
+                  Calendario(compacto: true, alarme: alarme)
+                  //Container(width: 50, height: 50, color: Colors.orange),
+                ],
+              ),
+            );
+          }),
           cardEditar(
             // Borda antiga
             filho: Row(
@@ -143,7 +137,7 @@ class EditarAlarme extends StatelessWidget {
                       alarme.alterarHora((await novaHora)!);
                     },
                     child: Text(
-                      "${alarme.hora.hour.toString().padLeft(2, "0")}:${alarme.hora.minute}",
+                      "${alarme.hora.hour.toString().padLeft(2, "0")}:${alarme.hora.minute.toString().padLeft(2, "0")}",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
@@ -167,9 +161,17 @@ class EditarAlarme extends StatelessWidget {
                 Flexible(
                   child: TextField(
                     controller: TextEditingController(text: alarme.nome),
-                    style: const TextStyle(color: Colors.white),
-                    onChanged: (String novoNome) async {
-                      alarme.nome = novoNome;
+                    cursorColor: Colors.white,
+                    decoration: const InputDecoration(
+                      hintText: "Nome do alarme",
+                      hintStyle: TextStyle(color: Colors.white),
+                      focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white)),
+                    ),
+                    style: const TextStyle(
+                        color: Colors.white, decorationColor: Colors.yellow),
+                    onChanged: (String? novoNome) async {
+                      alarme.alterarNome(novoNome);
                     },
                   ),
                 ),
@@ -250,13 +252,13 @@ class EditarAlarme extends StatelessWidget {
                 const Spacer(),
                 Observer(
                   builder: (_) {
-                    return PopupMenuButton<Intervalo>(
+                    return PopupMenuButton<int>(
                       itemBuilder: (BuildContext context) => itensMenuIntervalo,
                       child: Text(
-                        alarme.intervaloString(),
+                        alarme.diasRepeticaoStr,
                         style: TextStyle(color: Colors.blueGrey.shade50),
                       ),
-                      onSelected: (Intervalo novoIntervalo) =>
+                      onSelected: (int novoIntervalo) =>
                           alarme.alterarRepeticao(novoIntervalo),
                     );
                   },
@@ -274,12 +276,18 @@ class EditarAlarme extends StatelessWidget {
                   style: TextStyle(color: Colors.white, fontSize: 15),
                 ),
                 const Spacer(),
-                PopupMenuButton(
-                  itemBuilder: (BuildContext context) => itensMenuSoneca,
-                  child: Text(
-                    "a cada 5 minutos",
-                    style: TextStyle(color: Colors.blueGrey.shade50),
-                  ),
+                Observer(
+                  builder: (_) {
+                    return PopupMenuButton<int>(
+                      itemBuilder: (BuildContext context) => itensMenuSoneca,
+                      child: Text(
+                        alarme.sonecaStr,
+                        style: TextStyle(color: Colors.blueGrey.shade50),
+                      ),
+                      onSelected: (int novaSoneca) =>
+                          alarme.alterarSoneca(novaSoneca),
+                    );
+                  },
                 ),
               ],
             ),
