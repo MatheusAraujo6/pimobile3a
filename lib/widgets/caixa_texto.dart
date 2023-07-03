@@ -44,6 +44,7 @@ class CaixaEntradaTexto extends StatelessWidget {
       controller: TextEditingController(),
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: const TextStyle(color: Colors.white),
       ),
       obscureText: isPassword,
       style: const TextStyle(color: Colors.white),
