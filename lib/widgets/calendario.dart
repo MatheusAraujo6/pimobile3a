@@ -23,18 +23,18 @@ class DiaCalendario extends StatelessWidget {
 
     // Checar se o alarme está ativado para apenas hoje/amanhã
     bool nenhumDia = !alarme.diasSemana.contains(true);
+    DateTime today = DateTime.now();
 
     if (nenhumDia) {
       int tempoAlarme = (alarme.hora.hour * 60) + alarme.hora.minute;
       TimeOfDay temp = TimeOfDay.now();
       int tempoAgora = (temp.hour * 60) + temp.minute;
-      DateTime today = DateTime.now();
 
       if (tempoAgora > tempoAlarme) {
         if ((diaSem.dia == today.day + 1) &&
             (hoje.month == today.month) &&
             (hoje.year == today.year) &&
-            (diaSem.mesDiferente == false)) {
+            (diaSem.mesDiferente == 0)) {
           return true;
         } else {
           return false;
@@ -43,7 +43,7 @@ class DiaCalendario extends StatelessWidget {
         if ((diaSem.dia == today.day) &&
             (hoje.month == today.month) &&
             (hoje.year == today.year) &&
-            (diaSem.mesDiferente == false)) {
+            (diaSem.mesDiferente == 0)) {
           return true;
         } else {
           return false;
@@ -51,12 +51,27 @@ class DiaCalendario extends StatelessWidget {
       }
     }
 
+    DateTime diaNoAno =
+        DateTime(hoje.year, hoje.month + diaSem.mesDiferente, diaSem.dia);
+
+    int difAncora = alarme.ancora.difference(DateTime(hoje.year, 1, 1)).inDays;
+    int delta = diaNoAno.difference(DateTime(hoje.year, 1, 1)).inDays;
+    int novoDif = difAncora;
+    while (novoDif <= delta) {
+      novoDif += 7 * (alarme.diasRepeticao + 1);
+    }
+
+    if ((novoDif - delta) <= 7) {
+      return alarme.diasSemana[diaSem.diaNaSemana];
+    }
+
+    return false;
     // Checa apenas os dias na semana
-    return alarme.diasSemana[diaSem.diaNaSemana];
+    //return alarme.diasSemana[diaSem.diaNaSemana];
   }
 
   bool checarHoje() {
-    if (diaSem.mesDiferente) {
+    if (diaSem.mesDiferente != 0) {
       return false;
     }
 
@@ -72,7 +87,7 @@ class DiaCalendario extends StatelessWidget {
     if (checarHoje()) {
       corDia = Colors.blueAccent;
     } else {
-      corDia = diaSem.mesDiferente ? Colors.grey : Colors.white;
+      corDia = diaSem.mesDiferente != 0 ? Colors.grey : Colors.white;
     }
 
     return Expanded(
@@ -110,7 +125,7 @@ class DiaCalendario extends StatelessWidget {
       if (checarHoje()) {
         corDia = Colors.blueAccent;
       } else {
-        corDia = diaSem.mesDiferente ? Colors.grey : Colors.white;
+        corDia = diaSem.mesDiferente != 0 ? Colors.grey : Colors.white;
       }
     }
 
@@ -188,9 +203,9 @@ class DiaCalendario extends StatelessWidget {
 class DiaSemana {
   int dia;
   int diaNaSemana; // 0 - Domingo, 1 - Segunda, ..., 6 - Sábado
-  bool mesDiferente;
+  int mesDiferente; // 0 - Atual, (-1) - Anterior, 1 - Próximo
 
-  DiaSemana(this.dia, this.diaNaSemana, {this.mesDiferente = false});
+  DiaSemana(this.dia, this.diaNaSemana, {this.mesDiferente = 0});
 }
 
 class Calendario extends StatefulWidget {
@@ -298,7 +313,7 @@ class _CalendarioState extends State<Calendario> {
           0,
           DiaSemana(
               diaFinal - i, (primeiroDiaMesAnterior + (diaFinal - i) - 1) % 7,
-              mesDiferente: true),
+              mesDiferente: -1),
         );
       }
     }
@@ -308,8 +323,8 @@ class _CalendarioState extends State<Calendario> {
 
     // Adicionar dias após para preencher calendário
     for (int i = 1; diasMes.length < 42; i++) {
-      diasMes.add(
-          DiaSemana(i, (primeiroDiaProxMes + i - 1) % 7, mesDiferente: true));
+      diasMes
+          .add(DiaSemana(i, (primeiroDiaProxMes + i - 1) % 7, mesDiferente: 1));
     }
 
     return diasMes;

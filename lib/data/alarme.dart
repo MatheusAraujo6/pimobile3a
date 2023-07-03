@@ -14,6 +14,7 @@ class Alarme extends AlarmeBase with _$Alarme {
     diasSemana.add(false);
     diasSemana.add(false);
     diasSemana.add(false);
+    ancora = DateTime.now();
   }
 }
 
@@ -37,6 +38,12 @@ abstract class AlarmeBase with Store {
   @observable
   ObservableList<bool> diasSemana = ObservableList();
 
+  // Âncora para definir onde começa o intervalo
+  DateTime ancora = DateTime(2023);
+
+  // Começo do intervalo
+  int comecoIntervalo = 0;
+
   @observable
   int diasRepeticao = 0;
 
@@ -59,6 +66,12 @@ abstract class AlarmeBase with Store {
   bool vibracaoAtivada = true;
 
   @action
+  void incrementarIntervalo() {
+    comecoIntervalo += 1;
+    comecoIntervalo %= diasRepeticao;
+  }
+
+  @action
   void switchAtivado() {
     ativado = !ativado;
   }
@@ -76,12 +89,16 @@ abstract class AlarmeBase with Store {
   void alterarHora(TimeOfDay novaHora) {
     hora = novaHora;
     dummy += 1;
+
+    configurarAncora();
   }
 
   @action
   void alterarDia(int indice) {
     diasSemana[indice] = !diasSemana[indice];
     dummy += 1;
+
+    configurarAncora();
   }
 
   @action
@@ -182,4 +199,59 @@ abstract class AlarmeBase with Store {
     "A cada 5 minutos",
     "A cada 10 minutos"
   ];
+
+  int primeiroDia(DateTime hoje) {
+    // --- Cópia do método no calendário ---
+    // Baseado na Doomsday rule
+    final DateTime primeiro = DateTime(hoje.year, hoje.month, 1);
+    final DateTime doomsday = DateTime(hoje.year, 4, 4);
+    final int ano = hoje.year;
+    final int ancora =
+        2 + ano + (ano / 4).floor() - (ano / 100).floor() + (ano / 400).floor();
+
+    final int dif = primeiro.difference(doomsday).inDays;
+    //return (((dif % ancora + ancora) % ancora) % 7 + (ancora % 7)) % 7;
+    return (dif % 7 + (ancora % 7)) % 7;
+  }
+
+  void configurarAncora() {
+    bool nenhumDia = !diasSemana.contains(true);
+    DateTime hoje = DateTime.now();
+
+    if (nenhumDia) {
+      int tempoAlarme = (hora.hour * 60) + hora.minute;
+      TimeOfDay temp = TimeOfDay.now();
+      int tempoAgora = (temp.hour * 60) + temp.minute;
+
+      if (tempoAlarme > tempoAgora) {
+        ancora = hoje;
+      } else {
+        ancora = DateTime(hoje.year, hoje.month, hoje.day + 1);
+      }
+      return;
+    }
+
+    int primeiroDiaAlarme = -1;
+    for (int i = 0; i < diasSemana.length; i++) {
+      if (diasSemana[i]) {
+        primeiroDiaAlarme = i;
+        break;
+      }
+    }
+
+    assert(primeiroDiaAlarme >= 0);
+
+    int primeiroDiaJaneiro = primeiroDia(DateTime(hoje.year, 1, 1));
+    int copiaIntervalo = comecoIntervalo + 1;
+    int incremento = 0;
+    while (copiaIntervalo > 0) {
+      if (((primeiroDiaJaneiro + incremento) % 7) == primeiroDiaAlarme) {
+        copiaIntervalo -= 1;
+      }
+      incremento += 1;
+    }
+
+    incremento += 1; // Primeiro dia no ano em que o dia da semana ocorre
+    ancora = DateTime(hoje.year, 1, incremento);
+  }
 }
