@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
-import 'screens/login.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:alarme_pi/screens/login.dart';
+import 'firebase_options.dart';
 
-void main() {
+/////////////////////////////////////////////////////////////
+/// Requer o arquivo "firebase_options.dart" na pasta lib ///
+/////////////////////////////////////////////////////////////
+
+void main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 

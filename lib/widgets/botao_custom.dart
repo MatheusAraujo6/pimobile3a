@@ -13,9 +13,12 @@ class BotaoCustom extends StatelessWidget {
       style: ElevatedButton.styleFrom(
           shape: const StadiumBorder(),
           backgroundColor: Colors.blueGrey.shade400),
-      child: Text(
-        label,
-        style: const TextStyle(fontSize: 16, color: Colors.white),
+      child: FittedBox(
+        fit: BoxFit.fitWidth,
+        child: Text(
+          label,
+          style: const TextStyle(fontSize: 16, color: Colors.white),
+        ),
       ),
     );
   }

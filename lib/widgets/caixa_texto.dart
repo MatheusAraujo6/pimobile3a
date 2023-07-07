@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CaixaEntradaTexto extends StatelessWidget {
   final String label;
   final bool isPassword;
+  final TextEditingController? controller;
   final String? Function(String?)? fieldValidator;
 
   String? nullString(String? value) {
@@ -13,7 +14,8 @@ class CaixaEntradaTexto extends StatelessWidget {
       {super.key,
       this.label = "",
       this.isPassword = false,
-      this.fieldValidator});
+      this.fieldValidator,
+      this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +43,7 @@ class CaixaEntradaTexto extends StatelessWidget {
     );
     */
     return TextFormField(
-      controller: TextEditingController(),
+      controller: controller,
       decoration: InputDecoration(
         labelText: label,
         labelStyle: const TextStyle(color: Colors.white),

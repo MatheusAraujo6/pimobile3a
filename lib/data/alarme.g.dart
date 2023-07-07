@@ -200,6 +200,17 @@ mixin _$Alarme on AlarmeBase, Store {
       ActionController(name: 'AlarmeBase', context: context);
 
   @override
+  void incrementarIntervalo() {
+    final _$actionInfo = _$AlarmeBaseActionController.startAction(
+        name: 'AlarmeBase.incrementarIntervalo');
+    try {
+      return super.incrementarIntervalo();
+    } finally {
+      _$AlarmeBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void switchAtivado() {
     final _$actionInfo = _$AlarmeBaseActionController.startAction(
         name: 'AlarmeBase.switchAtivado');

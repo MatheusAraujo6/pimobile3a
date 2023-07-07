@@ -8,18 +8,17 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 class TelaPrincipal extends StatelessWidget {
   //final store = UserStore();
 
-  TelaPrincipal({super.key});
+  const TelaPrincipal({super.key});
 
   static void navegar(BuildContext context) {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => TelaPrincipal()),
+      MaterialPageRoute(builder: (context) => const TelaPrincipal()),
     );
   }
 
   static void sair(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const LoginTela()),
-    );
+    store = UserStore(); // Regenerar o store apenas ao trocar usuário
+    LoginTela.navegar(context);
   }
 
   @override
@@ -38,7 +37,7 @@ class TelaPrincipal extends StatelessWidget {
           title: const Text('Alarme PI'),
           actions: [
             IconButton(
-              onPressed: () => TelaPrincipal.sair(context),
+              onPressed: () => sair(context),
               icon: const Icon(Icons.logout),
             )
           ],
