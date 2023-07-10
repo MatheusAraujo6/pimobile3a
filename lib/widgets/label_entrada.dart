@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class LabelEntrada extends StatelessWidget {
+class LabelEntradaadasdasd extends StatelessWidget {
   final String label;
 
-  const LabelEntrada({super.key, this.label = ""});
+  const LabelEntradaadasdasd({super.key, this.label = ""});
 
   @override
   Widget build(BuildContext context) {

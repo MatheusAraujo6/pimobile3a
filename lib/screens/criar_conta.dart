@@ -3,7 +3,6 @@ import 'gerenciar_lista.dart';
 import 'package:alarme_pi/screens/login.dart';
 import '../widgets/caixa_texto.dart';
 import '../widgets/botao_custom.dart';
-import '../widgets/label_entrada.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:alarme_pi/state/user_store.dart';
 
@@ -22,22 +21,9 @@ class CriarConta extends StatefulWidget {
 
 class _CriarContaState extends State<CriarConta> {
   final key = GlobalKey<FormState>();
-  final nomeController = TextEditingController();
   final emailController = TextEditingController();
   final senhaController = TextEditingController();
   final confirmarSenhaController = TextEditingController();
-
-  String? validarNome(String? valor) {
-    if (valor == null || valor.isEmpty) {
-      return "Nome é obrigatório";
-    }
-
-    if (valor.contains(RegExp(r'[0-9]'))) {
-      return "Nome não pode conter números";
-    }
-
-    return null;
-  }
 
   String? validarEmail(String? valor) {
     if (valor == null || valor.isEmpty) {
@@ -95,90 +81,85 @@ class _CriarContaState extends State<CriarConta> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: Colors.blueGrey.shade900,
-      appBar: AppBar(
-        title: const Text("Criar conta"),
-        leading: IconButton(
-          onPressed: () => LoginTela.navegar(context),
-          icon: const Icon(Icons.arrow_back),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.blueGrey.shade900,
+        appBar: AppBar(
+          title: const Text("Criar conta"),
+          leading: IconButton(
+            onPressed: () {
+              store.erroSignUp = "";
+              LoginTela.navegar(context);
+            },
+            icon: const Icon(Icons.arrow_back),
+          ),
+          backgroundColor: Colors.blueGrey.shade800,
         ),
-        backgroundColor: Colors.blueGrey.shade800,
-      ),
-      body: Form(
-        key: key,
-        autovalidateMode: AutovalidateMode.always,
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Center(
-                child: Observer(builder: (_) {
-                  return Text(
-                    store.erroSignUp,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
+        body: Form(
+          key: key,
+          autovalidateMode: AutovalidateMode.always,
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: ListView(
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Observer(builder: (_) {
+                  if (store.erroSignUp.isEmpty) {
+                    return const Text("");
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 50),
+                    child: Center(
+                      child: Text(
+                        store.erroSignUp,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.redAccent,
+                        ),
+                      ),
                     ),
                   );
                 }),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //LabelEntrada(label: "Nome"),
-                  CaixaEntradaTexto(
-                    label: "Nome",
-                    fieldValidator: validarNome,
-                    controller: nomeController,
-                  ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //LabelEntrada(label: "Endereço de e-mail"),
-                  CaixaEntradaTexto(
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: CaixaEntradaTexto(
                     label: "Endereço de e-mail",
                     fieldValidator: validarEmail,
                     controller: emailController,
                   ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //LabelEntrada(label: "Senha"),
-                  CaixaEntradaTexto(
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: CaixaEntradaTexto(
+                    isPassword: true,
                     label: "Senha",
                     fieldValidator: validarSenha,
                     controller: senhaController,
                   ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //LabelEntrada(label: "Confirmar senha"),
-                  CaixaEntradaTexto(
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 35),
+                  child: CaixaEntradaTexto(
+                    isPassword: true,
                     label: "Confirmar senha",
                     fieldValidator: validarConfirmarSenha,
                     controller: confirmarSenhaController,
                   ),
-                ],
-              ),
-              SizedBox(
-                width: 0.36 * width,
-                height: 0.0625 * height,
-                child: BotaoCustom(
-                  label: "Confirmar",
-                  funcionalidade: () => enviarForm(context),
                 ),
-              ),
-            ],
+                UnconstrainedBox(
+                  child: SizedBox(
+                    width: 0.36 * width,
+                    height: 0.0625 * 800,
+                    child: BotaoCustom(
+                      label: "Confirmar",
+                      funcionalidade: () => enviarForm(context),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

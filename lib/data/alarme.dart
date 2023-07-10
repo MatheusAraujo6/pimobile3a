@@ -19,6 +19,8 @@ class Alarme extends AlarmeBase with _$Alarme {
 }
 
 abstract class AlarmeBase with Store {
+  String? key; // Usado para salvar a chave do Firebase
+
   // Usado apenas para regenerar o Calendário compacto
   @observable
   int dummy = 0;
@@ -32,8 +34,8 @@ abstract class AlarmeBase with Store {
   @observable
   TimeOfDay hora = const TimeOfDay(hour: 6, minute: 30);
 
-  // Cor é permanente, não observável.
-  final Color cor = Color(Random().nextInt(0xFFFFFFFF) | 0xFF000000);
+  // Cor não é observável.
+  Color cor = Color(Random().nextInt(0xFFFFFFFF) | 0xFF000000);
 
   @observable
   ObservableList<bool> diasSemana = ObservableList();

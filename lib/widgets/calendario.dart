@@ -51,6 +51,11 @@ class DiaCalendario extends StatelessWidget {
       }
     }
 
+    // Checa apenas os dias na semana
+    return alarme.diasSemana[diaSem.diaNaSemana];
+
+    /* Código usado para checar a função de intervalo - Incompleto 
+
     DateTime diaNoAno =
         DateTime(hoje.year, hoje.month + diaSem.mesDiferente, diaSem.dia);
 
@@ -66,8 +71,7 @@ class DiaCalendario extends StatelessWidget {
     }
 
     return false;
-    // Checa apenas os dias na semana
-    //return alarme.diasSemana[diaSem.diaNaSemana];
+    */
   }
 
   bool checarHoje() {
@@ -108,7 +112,7 @@ class DiaCalendario extends StatelessWidget {
 
   Widget linhaAlarme(Color cor) {
     return Padding(
-      padding: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+      padding: const EdgeInsets.all(5),
       child: Container(
         height: 1,
         color: cor,
@@ -175,10 +179,13 @@ class DiaCalendario extends StatelessWidget {
     //  linhas.add(linhaAlarme(Colors.greenAccent));
     //}
 
-    Widget colunaLinhas = Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: linhas,
+    Widget colunaLinhas = Flexible(
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 3),
+        child: ListView(
+          //mainAxisAlignment: MainAxisAlignment.start,
+          children: linhas,
+        ),
       ),
     );
 
@@ -397,13 +404,21 @@ class _CalendarioState extends State<Calendario> {
       children: [
         Row(
           children: [
-            Text(
-              "${mesPorExtenso(data.month)} ${data.year}",
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 32,
+            Flexible(
+              fit: FlexFit.tight,
+              child: FittedBox(
+                fit: BoxFit.fitWidth,
+                child: Text(
+                  "${mesPorExtenso(data.month)} ${data.year}",
+                  maxLines: 1,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                  ),
+                ),
               ),
             ),
+            //Flexible(),
             const Spacer(),
             IconButton(
               onPressed: () => alterarMes(-1),

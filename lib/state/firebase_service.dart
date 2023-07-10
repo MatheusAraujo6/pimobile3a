@@ -8,15 +8,15 @@ class FirebaseService {
       await _auth.signInWithEmailAndPassword(email: email, password: senha);
     } on FirebaseAuthException catch (e) {
       if (e.code.contains("wrong-password")) {
-        throw "Senha inválida";
+        throw "Senha incorreta!";
       }
 
       if (e.code.contains("user-not-found")) {
-        throw "Usuário não encontrado";
+        throw "Usuário não encontrado!";
       }
 
       if (e.code.contains("user-disabled")) {
-        throw "Usuário desativado";
+        throw "Usuário desativado!";
       }
 
       if (e.code.contains("invalid-email")) {
@@ -32,7 +32,7 @@ class FirebaseService {
       await _auth.createUserWithEmailAndPassword(email: email, password: senha);
     } on FirebaseAuthException catch (e) {
       if (e.code.contains("email-already-in-use")) {
-        throw "Senha inválida";
+        throw "Este endereço de e-mail já está em uso.";
       }
 
       if (e.code.contains("operation-not-allowed")) {

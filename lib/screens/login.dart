@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'gerenciar_lista.dart';
 import 'criar_conta.dart';
 import '../widgets/caixa_texto.dart';
-import '../widgets/label_entrada.dart';
 import '../widgets/botao_custom.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -65,6 +64,7 @@ class _LoginTelaState extends State<LoginTela> {
     }
 
     if (context.mounted) {
+      store.carregarAlarmes();
       TelaPrincipal.navegar(context);
     }
   }
@@ -72,77 +72,99 @@ class _LoginTelaState extends State<LoginTela> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: Colors.blueGrey.shade900,
-      body: Form(
-        key: key,
-        autovalidateMode: AutovalidateMode.always,
-        child: Padding(
-          padding: EdgeInsets.only(
-              top: 0.0875 * height,
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.blueGrey.shade900,
+        body: Form(
+          key: key,
+          autovalidateMode: AutovalidateMode.always,
+          child: Padding(
+            padding: EdgeInsets.only(
+              //top: 0.0875 * height,
               left: 0.12 * width,
               right: 0.12 * width,
-              bottom: 0.14 * height),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              const Icon(
-                Icons.alarm,
-                size: 150,
-                color: Colors.white,
-              ),
-              Observer(builder: (_) {
-                return Text(
-                  store.erroLogin,
-                  style: const TextStyle(
-                    fontSize: 25,
+              //bottom: 0.14 * height),
+            ),
+            child: ListView(
+              //crossAxisAlignment: CrossAxisAlignment.center,
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 50),
+                  child: Icon(
+                    Icons.alarm,
+                    size: 150,
                     color: Colors.white,
                   ),
-                );
-              }),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //LabelEntrada(label: 'Usuário'),
-                  CaixaEntradaTexto(
+                ),
+                Observer(builder: (_) {
+                  if (store.erroLogin.isEmpty) {
+                    return const Text("");
+                  }
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 50),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Center(
+                        child: Text(
+                          store.erroLogin,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 25,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: CaixaEntradaTexto(
                     label: 'Endereço de e-mail',
                     fieldValidator: validarEmail,
                     controller: emailController,
                   ),
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //LabelEntrada(label: "Senha"),
-                  CaixaEntradaTexto(
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 35),
+                  child: CaixaEntradaTexto(
                     label: 'Senha',
                     isPassword: true,
                     fieldValidator: validarSenha,
                     controller: senhaController,
                   ),
-                ],
-              ),
-              SizedBox(
-                width: 0.36 * width,
-                height: 0.0625 * height,
-                child: BotaoCustom(
-                  label: 'Entrar',
-                  funcionalidade: () => enviarForm(context),
                 ),
-              ),
-              SizedBox(
-                width: 0.36 * width,
-                height: 0.0625 * height,
-                child: BotaoCustom(
-                  label: 'Cadastre-se',
-                  funcionalidade: () => CriarConta.navegar(context),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 25),
+                  child: UnconstrainedBox(
+                    child: SizedBox(
+                      width: 0.36 * width,
+                      height: 0.0625 * 800,
+                      child: BotaoCustom(
+                        label: 'Entrar',
+                        funcionalidade: () => enviarForm(context),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                UnconstrainedBox(
+                  child: SizedBox(
+                    width: 0.36 * width,
+                    height: 0.0625 * 800,
+                    child: BotaoCustom(
+                      label: 'Cadastre-se',
+                      funcionalidade: () {
+                        store.erroLogin = "";
+                        CriarConta.navegar(context);
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
